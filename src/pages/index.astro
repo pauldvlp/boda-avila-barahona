@@ -13,11 +13,14 @@ import PlaylistSection from '../components/invitation/PlaylistSection.astro';
 import RSVPForm from '../components/invitation/RSVPForm.astro';
 import Toast from '../components/Toast.astro';
 import { getGuest } from '../lib/guests';
+import { getConfirmations } from '../lib/storage';
 import '../styles/global.css';
 
 const guestId = Astro.url.searchParams.get('guest') ?? '';
 const isGuest = !!Astro.url.searchParams.get('guest');
-const guest = await getGuest(guestId);
+const [guest, confirmations] = await Promise.all([getGuest(guestId), getConfirmations()]);
+const guestConfirmation = confirmations.find((c) => c.guestId === guestId);
+const hasTicket = !!guestConfirmation?.attending;
 
 const ogImage = new URL('/og-image.png', Astro.site).href;
 ---
@@ -59,7 +62,7 @@ const ogImage = new URL('/og-image.png', Astro.site).href;
     <Gallery />
     <MapSection seats={guest.seats} />
     <PlaylistSection guestId={guest.id} seats={guest.seats} locked={!isGuest} />
-    <RSVPForm guestId={guest.id} guestName={guest.name} maxSeats={guest.seats} locked={!isGuest} />
+    <RSVPForm guestId={guest.id} guestName={guest.name} maxSeats={guest.seats} locked={!isGuest} hasTicket={hasTicket} />
     <Footer />
     <MusicPlayer />
     <Toast />

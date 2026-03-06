@@ -4,8 +4,9 @@ interface Props {
   guestName: string;
   maxSeats: number;
   locked?: boolean;
+  hasTicket?: boolean;
 }
-const { guestId, guestName, maxSeats, locked = false } = Astro.props;
+const { guestId, guestName, maxSeats, locked = false, hasTicket = false } = Astro.props;
 const plural = maxSeats > 1;
 ---
 
@@ -71,7 +72,7 @@ const plural = maxSeats > 1;
       rounded-2xl border border-[#cdd5eb] bg-white p-5 shadow-sm
       sm:p-8
     ">
-      <form id="rsvp-form" class="space-y-6" data-plural={plural ? 'true' : 'false'}>
+      <form id="rsvp-form" class="space-y-6" data-plural={plural ? 'true' : 'false'} data-guest-id={guestId}>
         <input type="hidden" id="rsvp-guest-id" value={guestId} />
         <input type="hidden" id="rsvp-max-seats" value={maxSeats} />
 
@@ -207,12 +208,57 @@ const plural = maxSeats > 1;
         "></p>
         <p id="rsvp-success-msg" class="mb-3 font-serif text-xl text-brown-dark"></p>
         <p id="rsvp-success-body" class="text-sm/relaxed text-brown-muted"></p>
+        <!-- Ticket button (shown only when attending) -->
+        <a
+          id="rsvp-ticket-btn"
+          href={`/ticket?guest=${guestId}`}
+          class="
+            mt-5 hidden items-center gap-2 rounded-xl bg-brown-dark px-7 py-3
+            text-sm font-medium text-[#c9a86c] shadow-md transition-opacity
+            hover:opacity-80
+          "
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 5.5h14M1 10.5h14M5.5 1v2.5M10.5 1v2.5M5.5 12.5V15M10.5 12.5V15"/>
+            <rect x="1" y="3" width="14" height="10" rx="1.5"/>
+          </svg>
+          Ver mi Ticket
+        </a>
         <!-- Confetti particles -->
         <div id="confetti-container" class="
           pointer-events-none absolute inset-0 overflow-hidden
         "></div>
       </div>
     </div>
+    )}
+
+    <!-- Persistent ticket button: visible when already confirmed attending -->
+    {hasTicket && (
+      <div class="mt-6 flex flex-col items-center gap-3 text-center">
+        <div class="flex items-center gap-3">
+          <div class="h-px w-12 bg-[#c9a86c] opacity-40"></div>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="#c9a86c">
+            <path d="M7 0L8.575 5.075L14 7L8.575 8.575L7 14L5.425 8.575L0 7L5.425 5.425L7 0Z"/>
+          </svg>
+          <div class="h-px w-12 bg-[#c9a86c] opacity-40"></div>
+        </div>
+        <p class="font-serif text-sm text-brown-muted">Tu asistencia ya está confirmada</p>
+        <a
+          href={`/ticket?guest=${guestId}`}
+          class="
+            inline-flex items-center gap-2 rounded-xl bg-brown-dark px-8 py-3.5
+            text-sm font-medium text-[#c9a86c] shadow-lg transition-opacity
+            hover:opacity-80
+          "
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 5.5h14M1 10.5h14M5.5 1v2.5M10.5 1v2.5M5.5 12.5V15M10.5 12.5V15"/>
+            <rect x="1" y="3" width="14" height="10" rx="1.5"/>
+          </svg>
+          Ver mi Ticket
+        </a>
+        <p class="text-[10px] text-brown-muted/60 italic">* El ticket es de carácter simbólico</p>
+      </div>
     )}
   </div>
 </section>
@@ -354,6 +400,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         const msgEl   = document.getElementById('rsvp-success-msg')!;
         const bodyEl  = document.getElementById('rsvp-success-body')!;
 
+        const ticketBtn = document.getElementById('rsvp-ticket-btn');
+
         if (attending) {
           iconEl.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
           titleEl.textContent = '¡Nos vemos pronto!';
@@ -361,6 +409,10 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
           bodyEl.textContent  = isPlural
             ? 'Carlos y Cherly están muy emocionados de celebrar con ustedes este día tan especial'
             : 'Carlos y Cherly están muy emocionados de celebrar contigo este día tan especial';
+          if (ticketBtn) {
+            ticketBtn.classList.remove('hidden');
+            ticketBtn.classList.add('inline-flex');
+          }
         } else {
           iconEl.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg>`;
           titleEl.textContent = 'Gracias por avisar';

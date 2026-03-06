@@ -1,0 +1,483 @@
+---
+export const prerender = false;
+
+import QRCode from 'qrcode';
+import { getGuest } from '../lib/guests';
+import { getConfirmations } from '../lib/storage';
+import '../styles/global.css';
+
+const guestId = Astro.url.searchParams.get('guest') ?? '';
+if (!guestId) return Astro.redirect('/');
+
+const [guest, confirmations] = await Promise.all([getGuest(guestId), getConfirmations()]);
+const confirmation = confirmations.find((c) => c.guestId === guestId && c.attending);
+if (!confirmation) return Astro.redirect(`/?guest=${guestId}`);
+
+const invitationUrl = `${Astro.url.origin}/?guest=${guestId}`;
+const qrDataUrl = await QRCode.toDataURL(invitationUrl, {
+  width: 160,
+  margin: 1,
+  color: { dark: '#c9a86c', light: '#1a2744' },
+});
+
+const attendeesCount = confirmation.attendees || 1;
+const personasLabel = attendeesCount === 1 ? 'PERSONA' : 'PERSONAS';
+const ticketNumber = `CAB-${guestId.replace(/[^a-zA-Z0-9]/g, '').slice(0, 6).toUpperCase()}`;
+---
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mi Ticket · Boda Ávila Barahona</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Great+Vibes&family=Lato:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* Drop-shadow follows clip-path contour */
+      #ticket {
+        background: #1a2744;
+        filter: drop-shadow(0 18px 42px rgba(0,0,0,0.38));
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      @media print {
+        @page { size: landscape; margin: 0; }
+        body  { margin: 0; padding: 0; background: #f0ebe0 !important; }
+        .no-print { display: none !important; }
+        .print-wrapper {
+          display: flex !important; align-items: center !important;
+          justify-content: center !important; min-height: 100vh !important;
+          padding: 20px !important;
+        }
+        /* Force horizontal layout */
+        #ticket {
+          width: 680px !important;
+          max-width: none !important;
+          aspect-ratio: 16 / 9 !important;
+          overflow: hidden !important;
+        }
+        #ticket-body   { flex-direction: row !important; height: 100% !important; }
+        #ticket-main   { justify-content: space-between !important; padding: 1.5rem 2.5rem !important; }
+        #ticket-perf-h { display: none !important; }
+        #ticket-perf-v { display: block !important; }
+        #ticket-stub   {
+          width: 175px !important; flex-direction: column !important;
+          justify-content: space-between !important; padding: 1.5rem 1rem !important;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="min-h-screen bg-[#f0ebe0] font-sans">
+
+    <!-- Back button -->
+    <div class="no-print px-6 pt-6">
+      <a
+        href={`/?guest=${guestId}`}
+        class="
+          inline-flex items-center gap-2 text-sm text-brown-muted
+          transition-colors
+          hover:text-brown-dark
+        "
+      >
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 3L5 8l5 5"/>
+        </svg>
+        Volver a la invitación
+      </a>
+    </div>
+
+    <!-- Page header -->
+    <div class="no-print mx-auto max-w-4xl px-6 py-8 text-center">
+      <p class="mb-2 text-xs tracking-[0.3em] text-brown-muted uppercase">Tu Recuerdo</p>
+      <h1 class="
+        font-serif text-3xl text-brown-dark
+        sm:text-4xl
+      ">Tu Ticket de Boda</h1>
+      <p class="mt-2 text-sm text-brown-muted">Guarda este ticket como recuerdo de este día tan especial.</p>
+    </div>
+
+    <!-- ── Ticket wrapper ─────────────────────────────────────────────────── -->
+    <div class="
+      print-wrapper mx-auto max-w-3xl px-4 pb-8
+      sm:px-6
+    ">
+
+      <!-- THE TICKET -->
+      <div id="ticket" class="
+        relative mx-auto aspect-100/161 w-full max-w-xs overflow-hidden
+        sm:aspect-video sm:max-w-none
+      ">
+
+        <!-- Perforation dashed line (horizontal: mobile only) -->
+        <div
+          id="ticket-perf-h"
+          class="
+            pointer-events-none absolute inset-x-0
+            sm:hidden
+          "
+          style="border-top: 1.5px dashed rgba(201,168,108,0.35);"
+        ></div>
+
+        <!-- Perforation dashed line (vertical: desktop only) -->
+        <div
+          id="ticket-perf-v"
+          class="
+            pointer-events-none absolute inset-y-0 hidden
+            sm:block
+          "
+          style="border-left: 1.5px dashed rgba(201,168,108,0.35);"
+        ></div>
+
+        <!-- Ticket body -->
+        <div
+          id="ticket-body"
+          class="
+            relative flex h-full flex-col
+            sm:flex-row
+          "
+        >
+
+          <!-- ══ MAIN SECTION ══════════════════════════════════════════════ -->
+          <div
+            id="ticket-main"
+            class="
+              relative flex flex-1 flex-col justify-center p-7
+              sm:justify-between sm:px-10 sm:py-6
+            "
+          >
+
+            <!-- Corner ornaments -->
+            <svg class="pointer-events-none absolute top-4 left-4 opacity-40" width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M2,2 L12,2 M2,2 L2,12" stroke="#c9a86c" stroke-width="1.5"/>
+              <circle cx="2" cy="2" r="1.5" fill="#c9a86c"/>
+            </svg>
+            <svg class="pointer-events-none absolute top-4 right-4 opacity-40" width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M26,2 L16,2 M26,2 L26,12" stroke="#c9a86c" stroke-width="1.5"/>
+              <circle cx="26" cy="2" r="1.5" fill="#c9a86c"/>
+            </svg>
+            <svg class="pointer-events-none absolute bottom-4 left-4 opacity-40" width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M2,26 L12,26 M2,26 L2,16" stroke="#c9a86c" stroke-width="1.5"/>
+              <circle cx="2" cy="26" r="1.5" fill="#c9a86c"/>
+            </svg>
+            <svg class="
+              pointer-events-none absolute right-4 bottom-4 opacity-40
+            " width="28" height="28" viewBox="0 0 28 28" fill="none">
+              <path d="M26,26 L16,26 M26,26 L26,16" stroke="#c9a86c" stroke-width="1.5"/>
+              <circle cx="26" cy="26" r="1.5" fill="#c9a86c"/>
+            </svg>
+
+            <!-- Header label -->
+            <div class="
+              mb-2 text-center
+              sm:mb-0
+            ">
+              <div class="inline-flex items-center gap-2">
+                <div class="h-px w-8 bg-[#c9a86c] opacity-50"></div>
+                <p class="
+                  font-sans text-[8px] tracking-[0.55em] text-[#c9a86c]
+                  uppercase
+                ">La Boda de</p>
+                <div class="h-px w-8 bg-[#c9a86c] opacity-50"></div>
+              </div>
+            </div>
+
+            <!-- Couple names -->
+            <div class="
+              my-1 text-center
+              sm:my-0
+            ">
+              <p
+                class="font-script leading-none text-[#c9a86c] drop-shadow-lg"
+                style="font-size: clamp(2.2rem, 7vw, 3.6rem);"
+              >
+                Carlos &amp; Cherly
+              </p>
+            </div>
+
+            <!-- Date row -->
+            <div class="
+              my-3 flex items-center gap-2
+              sm:my-0
+            ">
+              <div class="h-px flex-1 bg-[#c9a86c] opacity-20"></div>
+              <svg width="13" height="8" viewBox="0 0 13 8" fill="none">
+                <path d="M0 4h10M7.5 1.5l2.5 2.5-2.5 2.5" stroke="#c9a86c" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div class="flex items-baseline gap-2">
+                <span class="
+                  font-sans text-[8.5px] tracking-[0.3em] text-white/40
+                  uppercase
+                ">Sábado</span>
+                <span class="font-serif text-2xl font-semibold text-white">18</span>
+                <span class="
+                  font-sans text-[8.5px] tracking-[0.3em] text-white/40
+                  uppercase
+                ">Abril · 2026</span>
+              </div>
+              <svg width="13" height="8" viewBox="0 0 13 8" fill="none">
+                <path d="M13 4H3M5.5 1.5L3 4l2.5 2.5" stroke="#c9a86c" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              <div class="h-px flex-1 bg-[#c9a86c] opacity-20"></div>
+            </div>
+
+            <!-- Gold star divider -->
+            <div class="
+              mb-3 flex items-center gap-2
+              sm:mb-0
+            ">
+              <div class="h-px flex-1 bg-[#c9a86c] opacity-30"></div>
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="#c9a86c"><path d="M4 0l.9 3.1L8 4l-3.1.9L4 8l-.9-3.1L0 4l3.1-.9z"/></svg>
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="#c9a86c"><path d="M4 0l.9 3.1L8 4l-3.1.9L4 8l-.9-3.1L0 4l3.1-.9z"/></svg>
+              <svg width="8" height="8" viewBox="0 0 8 8" fill="#c9a86c"><path d="M4 0l.9 3.1L8 4l-3.1.9L4 8l-.9-3.1L0 4l3.1-.9z"/></svg>
+              <div class="h-px flex-1 bg-[#c9a86c] opacity-30"></div>
+            </div>
+
+            <!-- GUEST — most prominent element -->
+            <div class="
+              mb-4 text-center
+              sm:mb-0
+            ">
+              <p class="
+                mb-2 font-sans text-[8px] tracking-[0.55em] text-[#c9a86c]
+                uppercase
+              ">
+                Con honor especial para
+              </p>
+              <p
+                class="font-serif leading-tight font-semibold text-white"
+                style="font-size: clamp(1.3rem, 4.5vw, 2.1rem);"
+              >
+                {guest.name}
+              </p>
+              {attendeesCount > 1 && (
+                <p class="
+                  mt-1.5 font-sans text-[8.5px] tracking-[0.3em] text-white/35
+                  uppercase
+                ">
+                  {attendeesCount} lugares reservados
+                </p>
+              )}
+            </div>
+
+            <!-- Symbolic note -->
+            <p class="
+              mt-3 text-center font-sans text-[8px] text-white/20 italic
+              sm:mt-0
+            ">
+              * Este ticket es de carácter simbólico, entregado como recuerdo de su asistencia.
+            </p>
+
+          </div>
+          <!-- / MAIN SECTION -->
+
+          <!-- ══ STUB SECTION ══════════════════════════════════════════════ -->
+          <div
+            id="ticket-stub"
+            class="
+              flex flex-row items-center justify-around gap-4 p-5
+              sm:w-[188px] sm:flex-col sm:items-center sm:justify-between sm:p-5
+            "
+          >
+
+            <!-- Circular ADMITE stamp -->
+            <svg
+              viewBox="0 0 110 110"
+              class="
+                h-[86px] w-[86px] shrink-0
+                sm:h-[100px] sm:w-[100px]
+              "
+            >
+              <circle cx="55" cy="55" r="51" fill="none" stroke="#c9a86c" stroke-width="1.5"/>
+              <circle cx="55" cy="55" r="43" fill="none" stroke="#c9a86c" stroke-width="0.7" stroke-dasharray="2 2"/>
+              <circle cx="55" cy="55" r="43" fill="#c9a86c" fill-opacity="0.06"/>
+              <!-- Top arc text -->
+              <path id="stamp-arc" d="M 12,55 A 43,43 0 0 1 98,55" fill="none"/>
+              <text font-family="Lato, sans-serif" font-size="7.5" fill="#c9a86c" font-weight="700" letter-spacing="1.5">
+                <textPath href="#stamp-arc" startOffset="6%">★ ÁVILA · BARAHONA · 2026 ★</textPath>
+              </text>
+              <!-- ADMITE -->
+              <text x="55" y="42" text-anchor="middle" font-family="Lato, sans-serif" font-size="8.5" fill="#c9a86c" font-weight="700" letter-spacing="3">ADMITE</text>
+              <!-- Number -->
+              <text x="55" y="64" text-anchor="middle" font-family="Cormorant Garamond, Georgia, serif" font-size="34" fill="white" font-weight="600">{attendeesCount}</text>
+              <!-- PERSONA/S -->
+              <text x="55" y="78" text-anchor="middle" font-family="Lato, sans-serif" font-size="6.5" fill="#c9a86c" font-weight="600" letter-spacing="2.5">{personasLabel}</text>
+            </svg>
+
+            <!-- QR Code -->
+            <div class="shrink-0 rounded-sm p-1.5 ring-1 ring-[#c9a86c]/30" style="background: #1a2744;">
+              <img
+                src={qrDataUrl}
+                alt="QR · Tu invitación"
+                width="80"
+                height="80"
+                style="image-rendering: pixelated; width: 72px; height: 72px; display: block;"
+              />
+            </div>
+
+            <!-- Ticket number -->
+            <div class="text-center">
+              <p class="
+                font-sans text-[7px] tracking-[0.35em] text-white/25 uppercase
+              ">No.</p>
+              <p class="font-sans text-[9px] tracking-wider text-[#c9a86c]/50">{ticketNumber}</p>
+            </div>
+
+          </div>
+          <!-- / STUB -->
+
+        </div>
+        <!-- / ticket-body -->
+      </div>
+      <!-- / THE TICKET -->
+
+      <!-- Download -->
+      <div class="no-print mt-6 flex flex-col items-center gap-3 text-center">
+        <p class="max-w-sm text-xs text-brown-muted">
+          El código QR te lleva directamente a tu invitación personalizada.
+        </p>
+        <button
+          id="btn-download"
+          class="
+            inline-flex items-center gap-2 rounded-xl bg-brown-dark px-8 py-3.5
+            text-sm font-medium text-[#c9a86c] shadow-lg transition-opacity
+            hover:opacity-80
+          "
+        >
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 1v9M4 7l4 4 4-4M2 13h12"/>
+          </svg>
+          Guardar Ticket
+        </button>
+        <p class="text-[10px] text-brown-muted/60">
+          Elige "Guardar como PDF" en el diálogo de impresión
+        </p>
+      </div>
+
+    </div>
+
+    <script>
+      // ── Build the ticket clip-path with beveled corners + notches ────────
+      function buildPath(
+        W: number, H: number,
+        isDesktop: boolean,
+        perfX: number, perfY: number
+      ): string {
+        const b = 10;   // bevel size (chamfered corners)
+        const R = 17;   // large notch radius (at perforation)
+        const r = 8;    // small notch radius (outer extremes)
+
+        if (isDesktop) {
+          // Horizontal ticket: large notches top/bottom at perfX, 3 small notches left/right edges
+          const n = 12;
+          const vNotches = (side: 'right' | 'left') =>
+            Array.from({length: n}, (_, i) => {
+              const pos = H * (side === 'right' ? i + 1 : n - i) / (n + 1);
+              return side === 'right'
+                ? [`L ${W},${pos - r}`, `A ${r},${r} 0 0,0 ${W},${pos + r}`]
+                : [`L 0,${pos + r}`,    `A ${r},${r} 0 0,0 0,${pos - r}`];
+            }).flat();
+          return [
+            `M ${b},0`,
+            `L ${perfX - R},0`,
+            `A ${R},${R} 0 0,0 ${perfX + R},0`,      // large notch – top edge
+            `L ${W - b},0`,
+            `L ${W},${b}`,                              // top-right bevel
+            ...vNotches('right'),
+            `L ${W},${H - b}`,
+            `L ${W - b},${H}`,                         // bottom-right bevel
+            `L ${perfX + R},${H}`,
+            `A ${R},${R} 0 0,0 ${perfX - R},${H}`,   // large notch – bottom edge
+            `L ${b},${H}`,
+            `L 0,${H - b}`,                            // bottom-left bevel
+            ...vNotches('left'),
+            `L 0,${b}`,
+            `Z`,                                        // top-left bevel
+          ].join(' ');
+        } else {
+          // Vertical ticket: large notches left/right at perfY, 12 small notches top/bottom edges
+          const n = 12;
+          const hNotches = (side: 'top' | 'bottom') =>
+            Array.from({length: n}, (_, i) => {
+              const pos = W * (side === 'top' ? i + 1 : n - i) / (n + 1);
+              return side === 'top'
+                ? [`L ${pos - r},0`,    `A ${r},${r} 0 0,0 ${pos + r},0`]
+                : [`L ${pos + r},${H}`, `A ${r},${r} 0 0,0 ${pos - r},${H}`];
+            }).flat();
+          return [
+            `M ${b},0`,
+            ...hNotches('top'),
+            `L ${W - b},0`,
+            `L ${W},${b}`,                              // top-right bevel
+            `L ${W},${perfY - R}`,
+            `A ${R},${R} 0 0,0 ${W},${perfY + R}`,    // large notch – right edge
+            `L ${W},${H - b}`,
+            `L ${W - b},${H}`,                         // bottom-right bevel
+            ...hNotches('bottom'),
+            `L ${b},${H}`,
+            `L 0,${H - b}`,                            // bottom-left bevel
+            `L 0,${perfY + R}`,
+            `A ${R},${R} 0 0,0 0,${perfY - R}`,       // large notch – left edge
+            `L 0,${b}`,
+            `Z`,                                        // top-left bevel
+          ].join(' ');
+        }
+      }
+
+      function updateShape() {
+        const ticket = document.getElementById('ticket');
+        const stub   = document.getElementById('ticket-stub');
+        const perfH  = document.getElementById('ticket-perf-h');
+        const perfV  = document.getElementById('ticket-perf-v');
+        if (!ticket || !stub) return;
+
+        const W = ticket.offsetWidth;
+        const H = ticket.offsetHeight;
+
+        const tR = ticket.getBoundingClientRect();
+        const sR = stub.getBoundingClientRect();
+
+        // Detect layout from actual DOM position, not viewport width.
+        // Works correctly for both responsive and print layouts.
+        const isDesktop = sR.left > tR.left + 10; // stub to the right → horizontal
+
+        // Perforation position relative to ticket
+        const perfX = sR.left - tR.left;   // for desktop: left edge of stub
+        const perfY = sR.top  - tR.top;    // for mobile:  top edge of stub
+
+        // Apply clip-path
+        ticket.style.clipPath = `path('${buildPath(W, H, isDesktop, perfX, perfY)}')`;
+
+        // Position the dashed perforation line
+        if (perfH) perfH.style.top  = `${perfY}px`;
+        if (perfV) perfV.style.left = `${perfX}px`;
+      }
+
+      // Run after full layout + fonts are ready
+      function init() {
+        requestAnimationFrame(() => requestAnimationFrame(updateShape));
+      }
+      document.addEventListener('DOMContentLoaded', init);
+      document.fonts.ready.then(updateShape);
+      window.addEventListener('resize', updateShape);
+
+      // Print: use fixed dimensions matching print CSS to avoid reflow-timing issues.
+      // max-width:none + width:680px → W=680, H=680*9/16=382, perfX=680-175=505
+      const PRINT_W = 680, PRINT_H = Math.round(680 * 9 / 16), PRINT_PERF_X = 505;
+      window.addEventListener('beforeprint', () => {
+        const ticket = document.getElementById('ticket');
+        if (ticket) ticket.style.clipPath = `path('${buildPath(PRINT_W, PRINT_H, true, PRINT_PERF_X, 0)}')`;
+      });
+      window.addEventListener('afterprint', updateShape);
+
+      document.getElementById('btn-download')!.addEventListener('click', () => window.print());
+    </script>
+
+  </body>
+</html>
