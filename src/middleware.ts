@@ -1,6 +1,6 @@
 import { defineMiddleware } from 'astro:middleware'
 
-export const onRequest = defineMiddleware((context, next) => {
+export const onRequest = defineMiddleware(async (context, next) => {
   const { pathname } = context.url
 
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
@@ -10,5 +10,11 @@ export const onRequest = defineMiddleware((context, next) => {
     }
   }
 
-  return next()
+  const response = await next()
+
+  if (pathname.startsWith('/admin')) {
+    response.headers.set('Cache-Control', 'no-store')
+  }
+
+  return response
 })
