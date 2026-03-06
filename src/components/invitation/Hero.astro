@@ -37,31 +37,24 @@ const { guestName } = Astro.props;
   "></div>
 
   <div class="
-    relative z-10 mx-auto flex max-w-lg flex-col items-center gap-4 pt-16 pb-24
+    relative z-10 mx-auto flex max-w-lg flex-col items-center gap-5 pt-16 pb-24
   ">
 
-    <!-- Parents -->
-    <div id="hero-parents" class="
-      grid w-full max-w-sm grid-cols-2 gap-6 text-sm
+    <!-- Names -->
+    <h1 id="hero-names" class="
+      font-script text-6xl/tight text-[#c9a86c] drop-shadow-lg
+      sm:text-7xl
     ">
-      <div>
-        <p class="mb-2 text-[10px] tracking-widest text-[#c9a86c] uppercase">Padres de la Novia</p>
-        <p class="font-serif text-white/90">José Danilo Barahona Lagos</p>
-        <p class="font-serif text-white/90">Brenda Aracely Aguilar</p>
-      </div>
-      <div>
-        <p class="mb-2 text-[10px] tracking-widest text-[#c9a86c] uppercase">Padres del Novio</p>
-        <p class="font-serif text-white/90">Carlos Armando Ávila García</p>
-        <p class="font-serif text-white/90">Edith Yolanda Flores Velásquez</p>
-      </div>
-    </div>
+      Carlos &amp; Cherly
+    </h1>
 
-    <!-- Pre-title -->
-    <p id="hero-pretitle" class="
-      mt-1 font-sans text-xs tracking-[0.3em] text-white/60 uppercase
-    ">
-      Con la bendición de Dios y sus familias
-    </p>
+    <!-- Unite + Date -->
+    <div id="hero-unite" class="flex flex-col items-center gap-1">
+      <p class="font-serif text-xl tracking-wider text-white">Se unen en Matrimonio</p>
+      <p class="font-serif text-lg font-medium tracking-widest text-[#c9a86c]">
+        18 · Abril · 2026
+      </p>
+    </div>
 
     <!-- Divider -->
     <div id="hero-divider-top" class="flex w-full max-w-xs items-center gap-3">
@@ -72,25 +65,30 @@ const { guestName } = Astro.props;
       <div class="h-px flex-1 bg-[#c9a86c] opacity-50"></div>
     </div>
 
-    <!-- Names -->
-    <h1 id="hero-names" class="
-      font-script text-6xl/tight text-[#c9a86c] drop-shadow-lg
-      sm:text-7xl
+    <!-- Blessing text -->
+    <p id="hero-pretitle" class="
+      max-w-xs font-serif text-sm/relaxed text-white/70 text-center italic
+      sm:max-w-sm sm:text-base/relaxed
     ">
-      Carlos &amp; Cherly
-    </h1>
-
-    <!-- Unite text -->
-    <p id="hero-unite" class="font-serif text-xl tracking-wider text-white">
-      Se unen en Matrimonio
+      Con nuestro amor, con la presencia de Dios entre nosotros,
+      y la bendición de nuestros padres
     </p>
 
-    <!-- Date -->
-    <p id="hero-date" class="
-      font-serif text-2xl font-medium tracking-widest text-[#c9a86c]
+    <!-- Parents -->
+    <div id="hero-parents" class="
+      grid w-full max-w-sm grid-cols-2 gap-x-6 gap-y-1 text-center text-sm
     ">
-      18 · Abril · 2026
-    </p>
+      <div>
+        <p class="mb-1.5 text-[10px] tracking-widest text-[#c9a86c] uppercase">Padres de la Novia</p>
+        <p class="font-serif text-white/90">José Danilo Barahona Lagos</p>
+        <p class="font-serif text-white/90">Brenda Aracely Aguilar</p>
+      </div>
+      <div>
+        <p class="mb-1.5 text-[10px] tracking-widest text-[#c9a86c] uppercase">Padres del Novio</p>
+        <p class="font-serif text-white/90">Carlos Armando Ávila García</p>
+        <p class="font-serif text-white/90">Edith Yolanda Flores Velásquez</p>
+      </div>
+    </div>
 
     <!-- Divider -->
     <div id="hero-divider-bot" class="flex w-full max-w-xs items-center gap-3">
@@ -101,27 +99,31 @@ const { guestName } = Astro.props;
       <div class="h-px flex-1 bg-[#c9a86c] opacity-50"></div>
     </div>
 
-    <!-- Guest greeting -->
-    <p id="hero-greeting" class="
-      max-w-sm font-sans text-base/relaxed text-white/70
+    <!-- Honor invite -->
+    <p id="hero-honor" class="
+      font-serif text-base/relaxed text-white/80 text-center
+      sm:text-lg/relaxed
     ">
-      Con mucha alegría te invitamos,
+      Tenemos el honor de invitarte a nuestra boda
     </p>
+
+    <!-- Guest name -->
     <p id="hero-guest-name" class="
       -mt-2 font-serif text-2xl font-semibold text-white
+      sm:text-3xl
     ">
       {guestName}
     </p>
 
     <!-- Venue -->
     <p id="hero-venue" class="
-      mt-1 font-sans text-xs tracking-widest text-white/50 uppercase
+      font-sans text-xs tracking-widest text-white/50 uppercase
     ">
       Centro de Día INJUPEMP · Tegucigalpa
     </p>
 
     <!-- Verse -->
-    <p id="hero-verse" class="mt-1 font-serif text-xs text-white/40 italic">
+    <p id="hero-verse" class="font-serif text-xs text-white/40 italic">
       "Todo lo hizo hermoso en su tiempo" — Ecl. 3:11
     </p>
   </div>
@@ -142,14 +144,13 @@ const { guestName } = Astro.props;
 
   const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-  tl.from('#hero-parents', { opacity: 0, y: 15, duration: 0.7 })
-    .from('#hero-pretitle', { opacity: 0, y: 15, duration: 0.7 }, '-=0.3')
-    .from('#hero-divider-top', { opacity: 0, scaleX: 0, duration: 0.6 }, '-=0.4')
-    .from('#hero-names', { opacity: 0, y: 30, duration: 1 }, '-=0.3')
+  tl.from('#hero-names', { opacity: 0, y: 30, duration: 1 })
     .from('#hero-unite', { opacity: 0, y: 20, duration: 0.7 }, '-=0.5')
-    .from('#hero-date', { opacity: 0, y: 20, duration: 0.7 }, '-=0.4')
-    .from('#hero-divider-bot', { opacity: 0, scaleX: 0, duration: 0.6 }, '-=0.4')
-    .from('#hero-greeting', { opacity: 0, y: 20, duration: 0.7 }, '-=0.3')
+    .from('#hero-divider-top', { opacity: 0, scaleX: 0, duration: 0.6 }, '-=0.3')
+    .from('#hero-pretitle', { opacity: 0, y: 15, duration: 0.7 }, '-=0.3')
+    .from('#hero-parents', { opacity: 0, y: 15, duration: 0.7 }, '-=0.4')
+    .from('#hero-divider-bot', { opacity: 0, scaleX: 0, duration: 0.6 }, '-=0.3')
+    .from('#hero-honor', { opacity: 0, y: 20, duration: 0.7 }, '-=0.3')
     .from('#hero-guest-name', { opacity: 0, y: 20, duration: 0.7 }, '-=0.4')
     .from('#hero-venue', { opacity: 0, y: 15, duration: 0.6 }, '-=0.3')
     .from('#hero-verse', { opacity: 0, duration: 0.8 }, '-=0.2')
