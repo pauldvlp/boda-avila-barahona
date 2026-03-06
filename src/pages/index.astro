@@ -16,6 +16,7 @@ import { getGuest } from '../lib/guests';
 import '../styles/global.css';
 
 const guestId = Astro.url.searchParams.get('guest') ?? '';
+const isGuest = !!Astro.url.searchParams.get('guest');
 const guest = await getGuest(guestId);
 
 const ogImage = new URL('/og-image.png', Astro.site).href;
@@ -51,14 +52,14 @@ const ogImage = new URL('/og-image.png', Astro.site).href;
   </head>
 
   <body>
-    <Hero guestName={guest.name} seats={guest.seats} />
+    <Hero guestName={isGuest ? guest.name : undefined} seats={guest.seats} />
     <Countdown />
     <Itinerary />
     <DressCode seats={guest.seats} />
     <Gallery />
     <MapSection seats={guest.seats} />
-    <PlaylistSection guestId={guest.id} seats={guest.seats} />
-    <RSVPForm guestId={guest.id} guestName={guest.name} maxSeats={guest.seats} />
+    <PlaylistSection guestId={guest.id} seats={guest.seats} locked={!isGuest} />
+    <RSVPForm guestId={guest.id} guestName={guest.name} maxSeats={guest.seats} locked={!isGuest} />
     <Footer />
     <MusicPlayer />
     <Toast />

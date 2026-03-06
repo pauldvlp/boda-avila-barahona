@@ -1,6 +1,6 @@
 ---
 interface Props {
-  guestName: string;
+  guestName?: string;
   seats: number;
 }
 const { guestName, seats } = Astro.props;
@@ -110,12 +110,14 @@ const plural = seats > 1;
     </p>
 
     <!-- Guest name -->
-    <p id="hero-guest-name" class="
-      -mt-2 font-serif text-2xl font-semibold text-white
-      sm:text-3xl
-    ">
-      {guestName}
-    </p>
+    {guestName && (
+      <p id="hero-guest-name" class="
+        -mt-2 font-serif text-2xl font-semibold text-white
+        sm:text-3xl
+      ">
+        {guestName}
+      </p>
+    )}
 
     <!-- Venue -->
     <p id="hero-venue" class="

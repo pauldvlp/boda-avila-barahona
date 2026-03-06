@@ -3,8 +3,9 @@ interface Props {
   guestId: string;
   guestName: string;
   maxSeats: number;
+  locked?: boolean;
 }
-const { guestId, guestName, maxSeats } = Astro.props;
+const { guestId, guestName, maxSeats, locked = false } = Astro.props;
 const plural = maxSeats > 1;
 ---
 
@@ -41,6 +42,25 @@ const plural = maxSeats > 1;
       </p>
     </div>
 
+    {locked ? (
+      <div class="
+        rounded-2xl border border-[#cdd5eb] bg-white p-5 shadow-sm
+        sm:p-8
+        flex flex-col items-center justify-center gap-4 py-10 text-center
+      ">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <p class="font-script text-3xl text-[#c9a86c]">Invitación Personalizada</p>
+        <p class="font-serif text-brown-dark">Esta sección es exclusiva<br/>para cada invitado.</p>
+        <p class="text-sm/relaxed text-brown-muted">
+          Para confirmar tu asistencia,<br/>
+          accede con tu enlace personal.<br/>
+          Si no lo tienes, contáctanos.
+        </p>
+      </div>
+    ) : (
     <div class="
       rounded-2xl border border-[#cdd5eb] bg-white p-5 shadow-sm
       sm:p-8
@@ -187,6 +207,7 @@ const plural = maxSeats > 1;
         "></div>
       </div>
     </div>
+    )}
   </div>
 </section>
 
