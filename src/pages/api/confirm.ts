@@ -33,7 +33,7 @@ export const POST: APIRoute = async ({ request }) => {
     await saveConfirmation({
       guestId,
       guestName,
-      attending: Boolean(attending),
+      attending: attending === true || attending === 'true',
       attendees: Number(attendees) || 0,
       message: String(message ?? ''),
       confirmedAt: new Date().toISOString(),
