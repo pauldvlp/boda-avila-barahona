@@ -1,5 +1,10 @@
 ---
-const address = 'Centro de Día INJUPEMP, Km 8 carretera zona sur, Tegucigalpa, Honduras';
+interface Props {
+  seats: number;
+}
+const { seats } = Astro.props;
+const plural = seats > 1;
+const address = 'Centro de Día INJUPEMP, Km 8 carretera zona sur, Tegucigalda, Honduras';
 const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`;
 ---
 
@@ -11,7 +16,7 @@ const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComp
       <p class="mb-3 text-xs tracking-[0.3em] text-white/50 uppercase">Ubicación</p>
       <h2 class="mb-4 font-serif text-4xl text-white">¿Cómo llegar?</h2>
       <p class="font-sans leading-relaxed text-white/70">
-        Te esperamos en un lugar especial para celebrar juntos
+        {plural ? 'Los esperamos en un lugar especial para celebrar juntos' : 'Te esperamos en un lugar especial para celebrar juntos'}
       </p>
     </div>
 

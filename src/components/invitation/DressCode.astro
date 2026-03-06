@@ -1,4 +1,9 @@
 ---
+interface Props {
+  seats: number;
+}
+const { seats } = Astro.props;
+const plural = seats > 1;
 ---
 
 <section id="dress-code" class="
@@ -8,7 +13,7 @@
     <p class="mb-3 text-xs tracking-[0.3em] text-white/50 uppercase">Vestimenta</p>
     <h2 class="mb-4 font-serif text-4xl text-white">Código de Vestimenta</h2>
     <p class="mb-10 font-sans leading-relaxed text-white/70">
-      Nos encantaría verte muy elegante, pues será una velada especial
+      {plural ? 'Nos encantaría verlos muy elegantes, pues será una velada especial' : 'Nos encantaría verte muy elegante, pues será una velada especial'}
     </p>
 
     <div class="flex justify-center gap-12">

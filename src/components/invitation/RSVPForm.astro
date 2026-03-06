@@ -5,6 +5,7 @@ interface Props {
   maxSeats: number;
 }
 const { guestId, guestName, maxSeats } = Astro.props;
+const plural = maxSeats > 1;
 ---
 
 <section id="rsvp" class="
@@ -20,7 +21,7 @@ const { guestId, guestName, maxSeats } = Astro.props;
       <h2 class="
         mb-2 font-serif text-3xl text-brown-dark
         sm:text-4xl
-      ">Confirma tu Asistencia</h2>
+      ">{plural ? 'Confirmen su Asistencia' : 'Confirma tu Asistencia'}</h2>
       <p class="text-sm text-brown-muted">Fecha límite: 05 de Abril de 2026</p>
     </div>
 
@@ -36,7 +37,7 @@ const { guestId, guestName, maxSeats } = Astro.props;
         El amor es infinito, pero el espacio limitado;
       </p>
       <p class="mt-1 text-sm/relaxed text-brown-muted sm:text-base/relaxed">
-        te pedimos amablemente respetar el número de lugares asignados.
+        {plural ? 'les pedimos amablemente respetar el número de lugares asignados.' : 'te pedimos amablemente respetar el número de lugares asignados.'}
       </p>
     </div>
 
@@ -44,7 +45,7 @@ const { guestId, guestName, maxSeats } = Astro.props;
       rounded-2xl border border-[#cdd5eb] bg-white p-5 shadow-sm
       sm:p-8
     ">
-      <form id="rsvp-form" class="space-y-6">
+      <form id="rsvp-form" class="space-y-6" data-plural={plural ? 'true' : 'false'}>
         <input type="hidden" id="rsvp-guest-id" value={guestId} />
         <input type="hidden" id="rsvp-max-seats" value={maxSeats} />
 
@@ -53,7 +54,7 @@ const { guestId, guestName, maxSeats } = Astro.props;
           <label class="
             mb-2 block text-xs tracking-widest text-brown-muted uppercase
           " for="rsvp-name">
-            Tu nombre
+            {plural ? 'Nombre' : 'Tu nombre'}
           </label>
           <input
             type="text"
@@ -71,7 +72,7 @@ const { guestId, guestName, maxSeats } = Astro.props;
 
         <!-- Attending toggle -->
         <div class="rsvp-field">
-          <p class="mb-3 text-xs tracking-widest text-brown-muted uppercase">¿Asistirás?</p>
+          <p class="mb-3 text-xs tracking-widest text-brown-muted uppercase">{plural ? '¿Asistirán?' : '¿Asistirás?'}</p>
           <div class="flex overflow-hidden rounded-xl border border-[#cdd5eb]">
             <button
               type="button"
@@ -82,7 +83,7 @@ const { guestId, guestName, maxSeats } = Astro.props;
               "
               data-value="yes"
             >
-              Sí, ahí estaré 🎉
+              {plural ? 'Sí, ahí estaremos 🎉' : 'Sí, ahí estaré 🎉'}
             </button>
             <button
               type="button"
@@ -93,7 +94,7 @@ const { guestId, guestName, maxSeats } = Astro.props;
               "
               data-value="no"
             >
-              No podré ir
+              {plural ? 'No podremos ir' : 'No podré ir'}
             </button>
           </div>
           <input type="hidden" id="rsvp-attending" value="true" />
@@ -294,6 +295,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   // Form submit
   const form = document.getElementById('rsvp-form') as HTMLFormElement;
   const successDiv = document.getElementById('rsvp-success')!;
+  const isPlural = form.dataset.plural === 'true';
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -328,13 +330,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         if (attending) {
           iconEl.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
           titleEl.textContent = '¡Nos vemos pronto!';
-          msgEl.textContent   = 'Tu asistencia fue confirmada';
-          bodyEl.textContent  = 'Carlos y Cherly están muy emocionados de celebrar contigo este día tan especial';
+          msgEl.textContent   = isPlural ? 'Su asistencia fue confirmada' : 'Tu asistencia fue confirmada';
+          bodyEl.textContent  = isPlural
+            ? 'Carlos y Cherly están muy emocionados de celebrar con ustedes este día tan especial'
+            : 'Carlos y Cherly están muy emocionados de celebrar contigo este día tan especial';
         } else {
           iconEl.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg>`;
           titleEl.textContent = 'Gracias por avisar';
-          msgEl.textContent   = 'Tu respuesta fue recibida';
-          bodyEl.textContent  = 'Carlos y Cherly entienden y te envían un abrazo. ¡Te extrañarán en este día tan especial!';
+          msgEl.textContent   = isPlural ? 'Su respuesta fue recibida' : 'Tu respuesta fue recibida';
+          bodyEl.textContent  = isPlural
+            ? 'Carlos y Cherly entienden y les envían un abrazo. ¡Los extrañarán en este día tan especial!'
+            : 'Carlos y Cherly entienden y te envían un abrazo. ¡Te extrañarán en este día tan especial!';
         }
 
         gsap.to(form, {
@@ -352,13 +358,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
         if (attending) {
           (window as any).showToast?.({
             title: '¡Nos vemos pronto!',
-            body: 'Carlos y Cherly están emocionados de celebrar contigo el 18 de Abril.',
+            body: isPlural
+              ? 'Carlos y Cherly están emocionados de celebrar con ustedes el 18 de Abril.'
+              : 'Carlos y Cherly están emocionados de celebrar contigo el 18 de Abril.',
             icon: 'celebrate',
           });
         } else {
           (window as any).showToast?.({
             title: 'Gracias por avisar',
-            body: 'Tu respuesta fue recibida. Carlos y Cherly te envían un abrazo.',
+            body: isPlural
+              ? 'Su respuesta fue recibida. Carlos y Cherly les envían un abrazo.'
+              : 'Tu respuesta fue recibida. Carlos y Cherly te envían un abrazo.',
             icon: 'hug',
           });
         }

@@ -1,8 +1,10 @@
 ---
 interface Props {
   guestName: string;
+  seats: number;
 }
-const { guestName } = Astro.props;
+const { guestName, seats } = Astro.props;
+const plural = seats > 1;
 ---
 
 <section id="hero" class="
@@ -104,7 +106,7 @@ const { guestName } = Astro.props;
       font-serif text-base/relaxed text-white/80 text-center
       sm:text-lg/relaxed
     ">
-      Tenemos el honor de invitarte a nuestra boda
+      {plural ? 'Tenemos el honor de invitarlos a nuestra boda' : 'Tenemos el honor de invitarte a nuestra boda'}
     </p>
 
     <!-- Guest name -->

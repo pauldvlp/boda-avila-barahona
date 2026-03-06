@@ -8,9 +8,9 @@ import Gallery from '../components/invitation/Gallery.astro';
 import Hero from '../components/invitation/Hero.astro';
 import Itinerary from '../components/invitation/Itinerary.astro';
 import MapSection from '../components/invitation/MapSection.astro';
+import MusicPlayer from '../components/invitation/MusicPlayer.astro';
 import PlaylistSection from '../components/invitation/PlaylistSection.astro';
 import RSVPForm from '../components/invitation/RSVPForm.astro';
-import MusicPlayer from '../components/invitation/MusicPlayer.astro';
 import Toast from '../components/Toast.astro';
 import { getGuest } from '../lib/guests';
 import '../styles/global.css';
@@ -51,13 +51,13 @@ const ogImage = new URL('/og-image.png', Astro.site).href;
   </head>
 
   <body>
-    <Hero guestName={guest.name} />
+    <Hero guestName={guest.name} seats={guest.seats} />
     <Countdown />
     <Itinerary />
-    <DressCode />
+    <DressCode seats={guest.seats} />
     <Gallery />
-    <MapSection />
-    <PlaylistSection guestId={guest.id} />
+    <MapSection seats={guest.seats} />
+    <PlaylistSection guestId={guest.id} seats={guest.seats} />
     <RSVPForm guestId={guest.id} guestName={guest.name} maxSeats={guest.seats} />
     <Footer />
     <MusicPlayer />

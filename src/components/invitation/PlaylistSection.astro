@@ -1,8 +1,10 @@
 ---
 interface Props {
   guestId: string;
+  seats: number;
 }
-const { guestId } = Astro.props;
+const { guestId, seats } = Astro.props;
+const plural = seats > 1;
 ---
 
 <section id="playlist-section" class="
@@ -19,7 +21,7 @@ const { guestId } = Astro.props;
       mb-7 font-sans leading-relaxed text-brown-muted
       sm:mb-10
     ">
-      Ayúdanos a crear la playlist perfecta para nuestra celebración
+      {plural ? 'Ayúdennos a crear la playlist perfecta para nuestra celebración' : 'Ayúdanos a crear la playlist perfecta para nuestra celebración'}
     </p>
 
     <div id="playlist-form-container" class="
@@ -98,7 +100,7 @@ const { guestId } = Astro.props;
         <p class="mb-2 font-script text-4xl text-[#c9a86c]">¡Gracias!</p>
         <p id="pl-success-msg" class="mb-3 font-serif text-xl text-brown-dark"></p>
         <p class="text-sm/relaxed text-brown-muted">
-          Tu canción llegará a la playlist de la celebración.<br/>
+          {plural ? 'Su canción llegará a la playlist de la celebración.' : 'Tu canción llegará a la playlist de la celebración.'}<br/>
           ¡Carlos y Cherly la bailarán con mucho gusto!
         </p>
       </div>
