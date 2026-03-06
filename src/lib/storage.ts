@@ -99,6 +99,15 @@ export async function getConfirmations(): Promise<Confirmation[]> {
   }
 }
 
+export async function deleteConfirmation(guestId: string): Promise<void> {
+  const all = await getConfirmations()
+  if (isVercel) {
+    await blobPut('confirmations/data.json', all.filter((c) => c.guestId !== guestId))
+    return
+  }
+  writeFileSync(join(dataDir, 'confirmations.json'), JSON.stringify(all.filter((c) => c.guestId !== guestId), null, 2))
+}
+
 export async function saveConfirmation(data: Confirmation): Promise<void> {
   const all = await getConfirmations()
   const idx = all.findIndex((c) => c.guestId === data.guestId)
@@ -127,6 +136,16 @@ export async function getSuggestions(): Promise<SongSuggestion[]> {
   } catch {
     return []
   }
+}
+
+export async function deleteSuggestion(index: number): Promise<void> {
+  const all = await getSuggestions()
+  all.splice(index, 1)
+  if (isVercel) {
+    await blobPut('suggestions/data.json', all)
+    return
+  }
+  writeFileSync(join(dataDir, 'suggestions.json'), JSON.stringify(all, null, 2))
 }
 
 export async function saveSuggestion(data: SongSuggestion): Promise<void> {

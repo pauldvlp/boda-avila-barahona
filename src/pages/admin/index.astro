@@ -198,7 +198,7 @@ const pending       = guests.length - confirmations.length;
               <div class={`
                 flex flex-col gap-3 rounded-2xl border bg-white p-5 shadow-sm
                 ${c.attending ? `border-green-100` : `border-[#cdd5eb]`}
-              `}>
+              `} data-guest-id={c.guestId}>
                 <!-- Header: name + badge -->
                 <div class="flex items-start justify-between gap-2">
                   <p class="font-serif text-lg/tight text-brown-dark">{c.guestName}</p>
@@ -241,6 +241,19 @@ const pending       = guests.length - confirmations.length;
                     text-brown-muted italic
                   ">"{c.message}"</p>
                 )}
+
+                <!-- Delete -->
+                <button
+                  class="
+                    btn-delete-confirmation rounded-full border border-red-100
+                    py-2 text-xs text-red-400 transition-colors
+                    hover:bg-red-50
+                  "
+                  data-id={c.guestId}
+                  data-name={c.guestName}
+                >
+                  Eliminar confirmación
+                </button>
               </div>
             ))}
           </div>
@@ -274,24 +287,37 @@ const pending       = guests.length - confirmations.length;
               sm:grid-cols-2
               lg:grid-cols-3
             ">
-              {suggestions.map(s => (
+              {suggestions.map((s, i) => (
                 <div class="
-                  flex items-start gap-4 rounded-2xl border border-[#cdd5eb]
+                  flex flex-col gap-3 rounded-2xl border border-[#cdd5eb]
                   bg-white p-5 shadow-sm
-                ">
-                  <div class="
-                    flex size-10 shrink-0 items-center justify-center
-                    rounded-full bg-rose-pale
-                  ">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
-                    </svg>
+                " data-song-index={i}>
+                  <div class="flex items-start gap-4">
+                    <div class="
+                      flex size-10 shrink-0 items-center justify-center
+                      rounded-full bg-rose-pale
+                    ">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+                      </svg>
+                    </div>
+                    <div class="min-w-0">
+                      <p class="truncate font-serif text-base text-brown-dark">{s.song}</p>
+                      {s.artist && <p class="truncate text-sm text-brown-muted">{s.artist}</p>}
+                      <p class="mt-1.5 text-[11px] text-[#8fa0c0]">{guestMap[s.guestId] ?? 'Invitado general'}</p>
+                    </div>
                   </div>
-                  <div class="min-w-0">
-                    <p class="truncate font-serif text-base text-brown-dark">{s.song}</p>
-                    {s.artist && <p class="truncate text-sm text-brown-muted">{s.artist}</p>}
-                    <p class="mt-1.5 text-[11px] text-[#8fa0c0]">{guestMap[s.guestId] ?? 'Invitado general'}</p>
-                  </div>
+                  <button
+                    class="
+                      btn-delete-song rounded-full border border-red-100
+                      py-2 text-xs text-red-400 transition-colors
+                      hover:bg-red-50
+                    "
+                    data-index={i}
+                    data-song={s.song}
+                  >
+                    Eliminar canción
+                  </button>
                 </div>
               ))}
             </div>
@@ -656,6 +682,46 @@ const pending       = guests.length - confirmations.length;
         const id   = formId.value;
         const name = formName.value;
         if (id) copyInviteLink(id, name);
+      });
+
+      // ── Delete confirmation ─────────────────────────────────────
+      document.querySelectorAll<HTMLButtonElement>('.btn-delete-confirmation').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const name = btn.dataset.name!;
+          if (!confirm(`¿Eliminar la confirmación de "${name}"? Esta acción no se puede deshacer.`)) return;
+
+          const guestId = btn.dataset.id!;
+          const res = await fetch(`/api/confirmations/${guestId}`, { method: 'DELETE' });
+          if (res.ok) {
+            const card = btn.closest('[data-guest-id]') as HTMLElement;
+            card.style.transition = 'opacity 0.3s';
+            card.style.opacity = '0';
+            setTimeout(() => {
+              card.remove();
+              showToast('Confirmación eliminada');
+            }, 300);
+          }
+        });
+      });
+
+      // ── Delete song ─────────────────────────────────────────────
+      document.querySelectorAll<HTMLButtonElement>('.btn-delete-song').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          const song = btn.dataset.song!;
+          if (!confirm(`¿Eliminar la canción "${song}"? Esta acción no se puede deshacer.`)) return;
+
+          const index = btn.dataset.index!;
+          const res = await fetch(`/api/songs/${index}`, { method: 'DELETE' });
+          if (res.ok) {
+            const card = btn.closest('[data-song-index]') as HTMLElement;
+            card.style.transition = 'opacity 0.3s';
+            card.style.opacity = '0';
+            setTimeout(() => {
+              card.remove();
+              showToast('Canción eliminada');
+            }, 300);
+          }
+        });
       });
 
       // ── Toast ───────────────────────────────────────────────────
