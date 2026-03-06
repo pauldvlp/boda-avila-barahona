@@ -18,8 +18,7 @@ import '../styles/global.css';
 const guestId = Astro.url.searchParams.get('guest') ?? '';
 const guest = await getGuest(guestId);
 
-const origin = Astro.url.origin;
-const ogImage = `${origin}/og-image.png`;
+const ogImage = new URL('/og-image.png', Astro.site).href;
 ---
 
 <html lang="es">
