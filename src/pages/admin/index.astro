@@ -92,7 +92,7 @@ const pending       = guests.length - confirmations.length;
           <span class="
             text-[11px] leading-tight
             sm:text-sm
-          ">Confirm. <span class="font-semibold">({confirmations.length})</span></span>
+          ">Confirm. <span id="count-confirmaciones" class="font-semibold">({confirmations.length})</span></span>
         </a>
         <a href="/admin?tab=canciones"
           class={`
@@ -110,7 +110,7 @@ const pending       = guests.length - confirmations.length;
           <span class="
             text-[11px] leading-tight
             sm:text-sm
-          ">Canciones <span class="font-semibold">({suggestions.length})</span></span>
+          ">Canciones <span id="count-canciones" class="font-semibold">({suggestions.length})</span></span>
         </a>
         <a href="/admin?tab=invitados"
           class={`
@@ -128,7 +128,7 @@ const pending       = guests.length - confirmations.length;
           <span class="
             text-[11px] leading-tight
             sm:text-sm
-          ">Invitados <span class="font-semibold">({guests.length})</span></span>
+          ">Invitados <span id="count-invitados" class="font-semibold">({guests.length})</span></span>
         </a>
       </div>
 
@@ -636,6 +636,7 @@ const pending       = guests.length - confirmations.length;
           } else {
             closeDrawer();
             showToast(isEdit ? 'Invitado actualizado' : 'Invitado agregado');
+            if (!isEdit) updateCount('count-invitados', +1);
             setTimeout(() => window.location.reload(), 800);
           }
         } catch {
@@ -656,6 +657,7 @@ const pending       = guests.length - confirmations.length;
           const id = btn.dataset.id!;
           const res = await fetch(`/api/guests/${id}`, { method: 'DELETE' });
           if (res.ok) {
+            updateCount('count-invitados', -1);
             const card = btn.closest('.guest-card') as HTMLElement;
             card.style.transition = 'opacity 0.3s';
             card.style.opacity = '0';
@@ -693,6 +695,7 @@ const pending       = guests.length - confirmations.length;
           const guestId = btn.dataset.id!;
           const res = await fetch(`/api/confirmations/${guestId}`, { method: 'DELETE' });
           if (res.ok) {
+            updateCount('count-confirmaciones', -1);
             const card = btn.closest('[data-guest-id]') as HTMLElement;
             card.style.transition = 'opacity 0.3s';
             card.style.opacity = '0';
@@ -713,6 +716,7 @@ const pending       = guests.length - confirmations.length;
           const index = btn.dataset.index!;
           const res = await fetch(`/api/songs/${index}`, { method: 'DELETE' });
           if (res.ok) {
+            updateCount('count-canciones', -1);
             const card = btn.closest('[data-song-index]') as HTMLElement;
             card.style.transition = 'opacity 0.3s';
             card.style.opacity = '0';
@@ -723,6 +727,14 @@ const pending       = guests.length - confirmations.length;
           }
         });
       });
+
+      // ── Tab counters ────────────────────────────────────────────
+      function updateCount(id: string, delta: number) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const current = parseInt(el.textContent?.replace(/\D/g, '') ?? '0');
+        el.textContent = `(${Math.max(0, current + delta)})`;
+      }
 
       // ── Toast ───────────────────────────────────────────────────
       let toastTimer: ReturnType<typeof setTimeout>;
