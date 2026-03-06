@@ -31,7 +31,7 @@ const dataDir = join(process.cwd(), 'src/assets/data')
 
 async function blobGet<T>(key: string): Promise<T | null> {
   const { get } = await import('@vercel/blob')
-  const result = await get(key, { access: 'private' })
+  const result = await get(key, { access: 'private', useCache: false })
   if (!result || !result.stream) return null
   const text = await new Response(result.stream).text()
   return JSON.parse(text) as T
@@ -39,7 +39,12 @@ async function blobGet<T>(key: string): Promise<T | null> {
 
 async function blobPut(key: string, data: unknown): Promise<void> {
   const { put } = await import('@vercel/blob')
-  await put(key, JSON.stringify(data), { access: 'private', addRandomSuffix: false, allowOverwrite: true })
+  await put(key, JSON.stringify(data), {
+    access: 'private',
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    cacheControlMaxAge: 0,
+  })
 }
 
 // ── Guests ────────────────────────────────────────────────────
