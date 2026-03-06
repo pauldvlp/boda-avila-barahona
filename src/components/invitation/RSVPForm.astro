@@ -194,8 +194,8 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
   // Toggle attending
   let attending = true;
-  let attendees = 1;
   const maxSeats = parseInt((document.getElementById('rsvp-max-seats') as HTMLInputElement).value) || 10;
+  let attendees = maxSeats;
 
   const btnYes = document.getElementById('btn-yes')!;
   const btnNo = document.getElementById('btn-no')!;
@@ -203,6 +203,9 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
   const attendeesSection = document.getElementById('rsvp-attendees-section')!;
   const attendeesDisplay = document.getElementById('attendees-display')!;
   const attendeesInput = document.getElementById('rsvp-attendees') as HTMLInputElement;
+
+  attendeesDisplay.textContent = String(attendees);
+  attendeesInput.value = String(attendees);
 
   function setAttending(val: boolean) {
     attending = val;
