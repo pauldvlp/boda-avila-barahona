@@ -1,0 +1,162 @@
+---
+import songUrl from '../../assets/songs/perfect-ed-dheeran-saxophone-version.mp3';
+---
+
+<!-- Floating music player -->
+<div
+  id="music-player"
+  class="
+    fixed bottom-6 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3
+    rounded-full border border-white/20 bg-[#0d1b35]/90 px-4 py-3 text-white
+    shadow-2xl backdrop-blur-md select-none
+  "
+  style="min-width: 220px;"
+>
+  <!-- Audio element -->
+  <audio id="bg-audio" loop preload="auto" src={songUrl}></audio>
+
+  <!-- Animated bars (visible when playing) -->
+  <div id="music-bars" class="
+    flex h-5 items-end gap-[3px] opacity-40 transition-opacity duration-300
+  ">
+    {[1, 2, 3, 4].map(i => (
+      <div
+        class="music-bar w-[3px] rounded-full bg-[#c9a86c]"
+        style={`height: ${8 + i * 3}px`}
+      ></div>
+    ))}
+  </div>
+
+  <!-- Song info -->
+  <div class="min-w-0 flex-1">
+    <p class="truncate text-[11px] leading-tight font-medium text-white/90">Perfect</p>
+    <p class="truncate text-[10px] leading-tight text-white/50">Ed Sheeran · Sax</p>
+  </div>
+
+  <!-- Play/Pause button -->
+  <button
+    id="music-toggle"
+    aria-label="Reproducir música"
+    class="
+      flex size-8 shrink-0 items-center justify-center rounded-full bg-[#c9a86c]
+      transition-colors
+      hover:bg-[#d4bb82]
+      active:scale-95
+    "
+  >
+    <!-- Play icon -->
+    <svg id="icon-play" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="
+      ml-0.5 text-[#0d1b35]
+    ">
+      <polygon points="5,3 19,12 5,21"/>
+    </svg>
+    <!-- Pause icon (hidden) -->
+    <svg id="icon-pause" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" class="
+      hidden text-[#0d1b35]
+    ">
+      <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+    </svg>
+  </button>
+</div>
+
+<style>
+  @keyframes bar1 { 0%,100%{height:6px}  50%{height:16px} }
+  @keyframes bar2 { 0%,100%{height:14px} 50%{height:6px}  }
+  @keyframes bar3 { 0%,100%{height:10px} 50%{height:18px} }
+  @keyframes bar4 { 0%,100%{height:8px}  50%{height:12px} }
+
+  .playing .music-bar:nth-child(1) { animation: bar1 0.9s ease-in-out infinite; }
+  .playing .music-bar:nth-child(2) { animation: bar2 0.7s ease-in-out infinite; }
+  .playing .music-bar:nth-child(3) { animation: bar3 1.1s ease-in-out infinite; }
+  .playing .music-bar:nth-child(4) { animation: bar4 0.8s ease-in-out infinite; }
+
+  #music-bars.playing { opacity: 1; }
+</style>
+
+<script>
+  const audio   = document.getElementById('bg-audio')    as HTMLAudioElement;
+  const toggle  = document.getElementById('music-toggle')!;
+  const bars    = document.getElementById('music-bars')!;
+  const iconPlay  = document.getElementById('icon-play')!;
+  const iconPause = document.getElementById('icon-pause')!;
+
+  let isPlaying = false;
+
+  function setPlaying(playing: boolean) {
+    isPlaying = playing;
+    if (playing) {
+      bars.classList.add('playing');
+      iconPlay.classList.add('hidden');
+      iconPause.classList.remove('hidden');
+      toggle.setAttribute('aria-label', 'Pausar música');
+    } else {
+      bars.classList.remove('playing');
+      iconPlay.classList.remove('hidden');
+      iconPause.classList.add('hidden');
+      toggle.setAttribute('aria-label', 'Reproducir música');
+    }
+
+    // Sync Media Session state
+    if ('mediaSession' in navigator) {
+      navigator.mediaSession.playbackState = playing ? 'playing' : 'paused';
+    }
+  }
+
+  async function play() {
+    try {
+      await audio.play();
+      setPlaying(true);
+    } catch {
+      setPlaying(false);
+    }
+  }
+
+  function pause() {
+    audio.pause();
+    setPlaying(false);
+  }
+
+  // Button click
+  toggle.addEventListener('click', () => {
+    if (isPlaying) pause(); else play();
+  });
+
+  // Sync when audio events fire externally (Media Session controls)
+  audio.addEventListener('play',  () => setPlaying(true));
+  audio.addEventListener('pause', () => setPlaying(false));
+  audio.addEventListener('ended', () => setPlaying(false)); // shouldn't happen (loop=true)
+
+  // ── Media Session API ────────────────────────────────────────────
+  if ('mediaSession' in navigator) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title:  'Perfect (Saxophone Version)',
+      artist: 'Ed Sheeran',
+      album:  'Boda Carlos & Cherly · 18 Abril 2026',
+      artwork: [
+        { src: '/og-image.png', sizes: '1200x630', type: 'image/png' },
+        { src: '/favicon.svg',  sizes: 'any',      type: 'image/svg+xml' },
+      ],
+    });
+
+    navigator.mediaSession.setActionHandler('play',  () => play());
+    navigator.mediaSession.setActionHandler('pause', () => pause());
+
+    // Some OS/browsers show previous/next — map to restart / no-op
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      audio.currentTime = 0;
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', null);
+
+    // Keep position state updated for seek bar in notification
+    audio.addEventListener('timeupdate', () => {
+      if (!audio.duration) return;
+      try {
+        navigator.mediaSession.setPositionState({
+          duration:     audio.duration,
+          playbackRate: audio.playbackRate,
+          position:     audio.currentTime,
+        });
+      } catch { /* ignore */ }
+    });
+  }
+</script>

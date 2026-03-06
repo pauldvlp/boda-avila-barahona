@@ -1,0 +1,355 @@
+---
+interface Props {
+  guestId: string;
+  guestName: string;
+  maxSeats: number;
+}
+const { guestId, guestName, maxSeats } = Astro.props;
+---
+
+<section id="rsvp" class="
+  bg-linear-to-b from-[#d0ddf5] to-rose-pale px-4 py-12
+  sm:px-6 sm:py-20
+">
+  <div class="mx-auto max-w-lg">
+    <div class="
+      mb-7 text-center
+      sm:mb-10
+    ">
+      <p class="mb-3 text-xs tracking-[0.3em] text-brown-muted uppercase">RSVP</p>
+      <h2 class="
+        mb-2 font-serif text-3xl text-brown-dark
+        sm:text-4xl
+      ">Confirma tu Asistencia</h2>
+      <p class="text-sm text-brown-muted">Fecha límite: 05 de Abril de 2026</p>
+    </div>
+
+    <div class="
+      rounded-2xl border border-[#cdd5eb] bg-white p-5 shadow-sm
+      sm:p-8
+    ">
+      <form id="rsvp-form" class="space-y-6">
+        <input type="hidden" id="rsvp-guest-id" value={guestId} />
+        <input type="hidden" id="rsvp-max-seats" value={maxSeats} />
+
+        <!-- Name -->
+        <div class="rsvp-field">
+          <label class="
+            mb-2 block text-xs tracking-widest text-brown-muted uppercase
+          " for="rsvp-name">
+            Tu nombre
+          </label>
+          <input
+            type="text"
+            id="rsvp-name"
+            required
+            value={guestName}
+            class="
+              w-full rounded-xl border border-[#cdd5eb] bg-cream px-4 py-3
+              text-brown-dark
+              focus:border-transparent focus:ring-2 focus:ring-[#c9a86c]
+              focus:outline-none
+            "
+          />
+        </div>
+
+        <!-- Attending toggle -->
+        <div class="rsvp-field">
+          <p class="mb-3 text-xs tracking-widest text-brown-muted uppercase">¿Asistirás?</p>
+          <div class="flex overflow-hidden rounded-xl border border-[#cdd5eb]">
+            <button
+              type="button"
+              id="btn-yes"
+              class="
+                flex-1 bg-[#c9a86c] py-3 text-sm font-medium text-white
+                transition-all duration-200
+              "
+              data-value="yes"
+            >
+              Sí, ahí estaré 🎉
+            </button>
+            <button
+              type="button"
+              id="btn-no"
+              class="
+                flex-1 bg-white py-3 text-sm font-medium text-brown-muted
+                transition-all duration-200
+              "
+              data-value="no"
+            >
+              No podré ir
+            </button>
+          </div>
+          <input type="hidden" id="rsvp-attending" value="true" />
+        </div>
+
+        <!-- Attendees count (shown when attending=yes) -->
+        <div id="rsvp-attendees-section" class="rsvp-field">
+          <p class="mb-3 text-xs tracking-widest text-brown-muted uppercase">¿Cuántos asistirán?</p>
+          <div class="flex items-center justify-center gap-4">
+            <button
+              type="button"
+              id="attendees-minus"
+              class="
+                flex size-10 items-center justify-center rounded-full border-2
+                border-[#c5cfe6] text-xl font-medium text-[#c9a86c]
+                transition-colors
+                hover:bg-rose-pale
+              "
+            >
+              −
+            </button>
+            <span id="attendees-display" class="
+              w-12 text-center font-serif text-3xl text-brown-dark
+            ">1</span>
+            <button
+              type="button"
+              id="attendees-plus"
+              class="
+                flex size-10 items-center justify-center rounded-full border-2
+                border-[#c5cfe6] text-xl font-medium text-[#c9a86c]
+                transition-colors
+                hover:bg-rose-pale
+              "
+            >
+              +
+            </button>
+          </div>
+          <input type="hidden" id="rsvp-attendees" value="1" />
+        </div>
+
+        <!-- Message -->
+        <div class="rsvp-field">
+          <label class="
+            mb-2 block text-xs tracking-widest text-brown-muted uppercase
+          " for="rsvp-message">
+            Mensaje para los novios (opcional)
+          </label>
+          <textarea
+            id="rsvp-message"
+            rows="3"
+            class="
+              w-full resize-none rounded-xl border border-[#cdd5eb] bg-cream
+              px-4 py-3 text-brown-dark
+              focus:border-transparent focus:ring-2 focus:ring-[#c9a86c]
+              focus:outline-none
+            "
+            placeholder="Escribe algo especial para los novios..."
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          id="rsvp-submit"
+          class="
+            w-full rounded-xl bg-[#c9a86c] py-4 text-base font-medium text-white
+            transition-colors
+            hover:bg-[#a8893d]
+          "
+        >
+          Confirmar Asistencia
+        </button>
+      </form>
+
+      <!-- Success state -->
+      <div id="rsvp-success" class="hidden py-6 text-center">
+        <div id="rsvp-success-icon" class="
+          mx-auto mb-5 flex size-20 items-center justify-center rounded-full
+          bg-rose-pale
+        ">
+          <!-- icon injected by JS -->
+        </div>
+        <p id="rsvp-success-title" class="
+          mb-2 font-script text-4xl text-[#c9a86c]
+        "></p>
+        <p id="rsvp-success-msg" class="mb-3 font-serif text-xl text-brown-dark"></p>
+        <p id="rsvp-success-body" class="text-sm/relaxed text-brown-muted"></p>
+        <!-- Confetti particles -->
+        <div id="confetti-container" class="
+          pointer-events-none absolute inset-0 overflow-hidden
+        "></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Animate in on scroll
+  gsap.from('.rsvp-field', {
+    opacity: 0,
+    y: 20,
+    stagger: 0.12,
+    duration: 0.7,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '#rsvp',
+      start: 'top 75%',
+    },
+  });
+
+  // Toggle attending
+  let attending = true;
+  let attendees = 1;
+  const maxSeats = parseInt((document.getElementById('rsvp-max-seats') as HTMLInputElement).value) || 10;
+
+  const btnYes = document.getElementById('btn-yes')!;
+  const btnNo = document.getElementById('btn-no')!;
+  const attendingInput = document.getElementById('rsvp-attending') as HTMLInputElement;
+  const attendeesSection = document.getElementById('rsvp-attendees-section')!;
+  const attendeesDisplay = document.getElementById('attendees-display')!;
+  const attendeesInput = document.getElementById('rsvp-attendees') as HTMLInputElement;
+
+  function setAttending(val: boolean) {
+    attending = val;
+    attendingInput.value = val ? 'true' : 'false';
+    if (val) {
+      btnYes.classList.add('bg-[#c9a86c]', 'text-white');
+      btnYes.classList.remove('bg-white', 'text-[#4d5f8a]');
+      btnNo.classList.remove('bg-[#c9a86c]', 'text-white');
+      btnNo.classList.add('bg-white', 'text-[#4d5f8a]');
+      gsap.to(attendeesSection, { opacity: 1, height: 'auto', duration: 0.3 });
+    } else {
+      btnNo.classList.add('bg-[#c9a86c]', 'text-white');
+      btnNo.classList.remove('bg-white', 'text-[#4d5f8a]');
+      btnYes.classList.remove('bg-[#c9a86c]', 'text-white');
+      btnYes.classList.add('bg-white', 'text-[#4d5f8a]');
+      gsap.to(attendeesSection, { opacity: 0, height: 0, duration: 0.3 });
+    }
+  }
+
+  btnYes.addEventListener('click', () => setAttending(true));
+  btnNo.addEventListener('click', () => setAttending(false));
+
+  // Stepper
+  document.getElementById('attendees-minus')!.addEventListener('click', () => {
+    if (attendees > 1) {
+      attendees--;
+      attendeesDisplay.textContent = String(attendees);
+      attendeesInput.value = String(attendees);
+      gsap.from(attendeesDisplay, { scale: 0.8, duration: 0.2 });
+    }
+  });
+
+  document.getElementById('attendees-plus')!.addEventListener('click', () => {
+    if (attendees < maxSeats) {
+      attendees++;
+      attendeesDisplay.textContent = String(attendees);
+      attendeesInput.value = String(attendees);
+      gsap.from(attendeesDisplay, { scale: 1.2, duration: 0.2 });
+    }
+  });
+
+  // Confetti
+  function launchConfetti() {
+    const colors = ['#c9a86c', '#c9a86c', '#edf1fa', '#1a2744', '#4d5f8a'];
+    const container = document.getElementById('confetti-container')!;
+    for (let i = 0; i < 40; i++) {
+      const el = document.createElement('div');
+      el.style.cssText = `
+        position: absolute;
+        width: ${4 + Math.random() * 6}px;
+        height: ${4 + Math.random() * 6}px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
+        left: ${20 + Math.random() * 60}%;
+        top: 50%;
+      `;
+      container.appendChild(el);
+      gsap.to(el, {
+        y: -(100 + Math.random() * 200),
+        x: -100 + Math.random() * 200,
+        opacity: 0,
+        rotation: Math.random() * 360,
+        duration: 1 + Math.random(),
+        ease: 'power2.out',
+        onComplete: () => el.remove(),
+      });
+    }
+  }
+
+  // Form submit
+  const form = document.getElementById('rsvp-form') as HTMLFormElement;
+  const successDiv = document.getElementById('rsvp-success')!;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = document.getElementById('rsvp-submit') as HTMLButtonElement;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    const guestId = (document.getElementById('rsvp-guest-id') as HTMLInputElement).value;
+    const guestName = (document.getElementById('rsvp-name') as HTMLInputElement).value;
+    const message = (document.getElementById('rsvp-message') as HTMLTextAreaElement).value;
+
+    try {
+      const res = await fetch('/api/confirm', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          guestId,
+          guestName,
+          attending,
+          attendees: attending ? attendees : 0,
+          message,
+        }),
+      });
+
+      if (res.ok) {
+        // Populate success state content based on attending
+        const iconEl  = document.getElementById('rsvp-success-icon')!;
+        const titleEl = document.getElementById('rsvp-success-title')!;
+        const msgEl   = document.getElementById('rsvp-success-msg')!;
+        const bodyEl  = document.getElementById('rsvp-success-body')!;
+
+        if (attending) {
+          iconEl.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>`;
+          titleEl.textContent = '¡Nos vemos pronto!';
+          msgEl.textContent   = 'Tu asistencia fue confirmada';
+          bodyEl.textContent  = 'Carlos y Cherly están muy emocionados de celebrar contigo este día tan especial';
+        } else {
+          iconEl.innerHTML = `<svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M6 21v-2a6 6 0 0 1 12 0v2"/></svg>`;
+          titleEl.textContent = 'Gracias por avisar';
+          msgEl.textContent   = 'Tu respuesta fue recibida';
+          bodyEl.textContent  = 'Carlos y Cherly entienden y te envían un abrazo. ¡Te extrañarán en este día tan especial!';
+        }
+
+        gsap.to(form, {
+          opacity: 0,
+          y: -10,
+          duration: 0.3,
+          onComplete: () => {
+            form.classList.add('hidden');
+            successDiv.classList.remove('hidden');
+            gsap.from(successDiv, { opacity: 0, y: 20, duration: 0.6 });
+            if (attending) launchConfetti();
+          },
+        });
+
+        if (attending) {
+          (window as any).showToast?.({
+            title: '¡Nos vemos pronto!',
+            body: 'Carlos y Cherly están emocionados de celebrar contigo el 18 de Abril.',
+            icon: 'celebrate',
+          });
+        } else {
+          (window as any).showToast?.({
+            title: 'Gracias por avisar',
+            body: 'Tu respuesta fue recibida. Carlos y Cherly te envían un abrazo.',
+            icon: 'hug',
+          });
+        }
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Confirmar Asistencia';
+      }
+    } catch {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Confirmar Asistencia';
+    }
+  });
+</script>

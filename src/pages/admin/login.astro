@@ -1,0 +1,68 @@
+---
+export const prerender = false;
+
+import '../../styles/global.css';
+
+const error = Astro.url.searchParams.get('error');
+---
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin — Boda Ávila ♥ Barahona</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Lato:wght@300;400;700&display=swap" rel="stylesheet" />
+  </head>
+  <body class="flex min-h-screen items-center justify-center bg-cream">
+    <div class="mx-4 w-full max-w-sm">
+      <div class="mb-8 text-center">
+        <p class="mb-2 font-script text-5xl text-[#c9a86c]">Admin</p>
+        <h1 class="font-serif text-xl text-brown-dark">Boda Ávila ♥ Barahona</h1>
+      </div>
+
+      <div class="rounded-2xl border border-rose-pale bg-white p-8 shadow-lg">
+        {error && (
+          <p class="
+            mb-4 rounded-lg bg-red-50 p-3 text-center text-sm text-red-500
+          ">
+            Contraseña incorrecta. Intenta de nuevo.
+          </p>
+        )}
+
+        <form method="POST" action="/api/admin-login" class="space-y-6">
+          <div>
+            <label class="mb-2 block text-sm font-medium text-brown-muted" for="password">
+              Contraseña
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              autofocus
+              class="
+                w-full rounded-xl border border-rose-pale bg-cream px-4 py-3
+                text-brown-dark
+                focus:border-transparent focus:ring-2 focus:ring-[#c9a86c]
+                focus:outline-none
+              "
+              placeholder="••••••••"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="
+              w-full rounded-xl bg-[#c9a86c] py-3 font-medium text-white
+              transition-colors
+              hover:bg-[#a8893d]
+            "
+          >
+            Ingresar
+          </button>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>

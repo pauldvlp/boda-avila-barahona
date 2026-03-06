@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+
+// Import all photos
+import photo1  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.10.49 PM.jpeg';
+import photo2  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.10.50 PM.jpeg';
+import photo3  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.10.50 PM (1).jpeg';
+import photo4  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.10.50 PM (2).jpeg';
+import photo5  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.10.50 PM (3).jpeg';
+import photo6  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.10.50 PM (4).jpeg';
+import photo7  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.10.50 PM (5).jpeg';
+import photo8  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.10.51 PM.jpeg';
+import photo9  from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.13.15 PM.jpeg';
+import photo10 from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.16.00 PM.jpeg';
+import photo11 from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.18.14 PM.jpeg';
+import photo12 from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.18.47 PM.jpeg';
+import photo13 from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.23.51 PM.jpeg';
+import photo14 from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.23.52 PM.jpeg';
+import photo15 from '../../assets/photos/WhatsApp Image 2026-02-24 at 10.24.49 PM.jpeg';
+
+const photos = [
+  photo1, photo2, photo3, photo4, photo5,
+  photo6, photo7, photo8, photo9, photo10,
+  photo11, photo12, photo13, photo14, photo15,
+];
+---
+
+<section id="gallery" class="bg-cream px-6 py-20">
+  <div class="mx-auto max-w-4xl">
+    <div class="mb-12 text-center">
+      <p class="mb-3 text-xs tracking-[0.3em] text-brown-muted uppercase">Nuestra historia</p>
+      <h2 class="font-serif text-4xl text-brown-dark">Momentos juntos</h2>
+      <div class="mx-auto mt-4 flex max-w-xs items-center gap-3">
+        <div class="h-px flex-1 bg-[#c9a86c] opacity-40"></div>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="#c9a86c"><path d="M6 0L7.4 4.6L12 6L7.4 7.4L6 12L4.6 7.4L0 6L4.6 4.6Z"/></svg>
+        <div class="h-px flex-1 bg-[#c9a86c] opacity-40"></div>
+      </div>
+    </div>
+
+    <div class="
+      grid grid-cols-2 gap-3
+      sm:grid-cols-3 sm:gap-4
+    ">
+      {photos.map((photo, i) => (
+        <div class="
+          photo-item aspect-square overflow-hidden rounded-2xl shadow-sm
+        ">
+          <Image
+            src={photo}
+            alt={`Foto ${i + 1} de Carlos y Cherly`}
+            width={400}
+            height={400}
+            class="
+              size-full object-cover transition-transform duration-500
+              hover:scale-105
+            "
+            loading={i < 6 ? 'eager' : 'lazy'}
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  gsap.from('.photo-item', {
+    opacity: 0,
+    scale: 0.9,
+    stagger: 0.07,
+    duration: 0.6,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '#gallery',
+      start: 'top 75%',
+    },
+  });
+</script>

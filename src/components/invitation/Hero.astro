@@ -1,0 +1,161 @@
+---
+interface Props {
+  guestName: string;
+}
+const { guestName } = Astro.props;
+---
+
+<section id="hero" class="
+  relative flex min-h-svh flex-col items-center justify-center overflow-hidden
+  bg-linear-to-b from-[#0d1b35] via-brown-dark to-[#1e2f52] px-6 text-center
+">
+
+  <!-- Ornamental SVG frame -->
+  <svg class="pointer-events-none absolute inset-0 size-full opacity-20" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <path d="M20,20 L80,20 M20,20 L20,80" stroke="#c9a86c" stroke-width="1.5" fill="none"/>
+    <path d="M20,20 Q50,50 80,20" stroke="#c9a86c" stroke-width="0.8" fill="none"/>
+    <circle cx="20" cy="20" r="3" fill="#c9a86c"/>
+    <path d="M380,20 L320,20 M380,20 L380,80" stroke="#c9a86c" stroke-width="1.5" fill="none"/>
+    <path d="M380,20 Q350,50 320,20" stroke="#c9a86c" stroke-width="0.8" fill="none"/>
+    <circle cx="380" cy="20" r="3" fill="#c9a86c"/>
+    <path d="M20,680 L80,680 M20,680 L20,620" stroke="#c9a86c" stroke-width="1.5" fill="none"/>
+    <path d="M20,680 Q50,650 80,680" stroke="#c9a86c" stroke-width="0.8" fill="none"/>
+    <circle cx="20" cy="680" r="3" fill="#c9a86c"/>
+    <path d="M380,680 L320,680 M380,680 L380,620" stroke="#c9a86c" stroke-width="1.5" fill="none"/>
+    <path d="M380,680 Q350,650 320,680" stroke="#c9a86c" stroke-width="0.8" fill="none"/>
+    <circle cx="380" cy="680" r="3" fill="#c9a86c"/>
+    <path d="M160,35 Q200,25 240,35" stroke="#c9a86c" stroke-width="0.8" fill="none"/>
+    <path d="M170,40 Q200,30 230,40" stroke="#c9a86c" stroke-width="0.5" fill="none"/>
+    <path d="M160,665 Q200,675 240,665" stroke="#c9a86c" stroke-width="0.8" fill="none"/>
+    <path d="M170,660 Q200,670 230,660" stroke="#c9a86c" stroke-width="0.5" fill="none"/>
+  </svg>
+
+  <!-- Subtle radial glow -->
+  <div class="
+    pointer-events-none absolute inset-0
+    bg-[radial-gradient(ellipse_80%_60%_at_50%_50%,rgba(201,168,108,0.08),transparent)]
+  "></div>
+
+  <div class="
+    relative z-10 mx-auto flex max-w-lg flex-col items-center gap-4 pt-16 pb-24
+  ">
+
+    <!-- Parents -->
+    <div id="hero-parents" class="
+      grid w-full max-w-sm grid-cols-2 gap-6 text-sm
+    ">
+      <div>
+        <p class="mb-2 text-[10px] tracking-widest text-[#c9a86c] uppercase">Padres de la Novia</p>
+        <p class="font-serif text-white/90">José Danilo Barahona Lagos</p>
+        <p class="font-serif text-white/90">Brenda Aracely Aguilar</p>
+      </div>
+      <div>
+        <p class="mb-2 text-[10px] tracking-widest text-[#c9a86c] uppercase">Padres del Novio</p>
+        <p class="font-serif text-white/90">Carlos Armando Ávila García</p>
+        <p class="font-serif text-white/90">Edith Yolanda Flores Velásquez</p>
+      </div>
+    </div>
+
+    <!-- Pre-title -->
+    <p id="hero-pretitle" class="
+      mt-1 font-sans text-xs tracking-[0.3em] text-white/60 uppercase
+    ">
+      Con la bendición de Dios y sus familias
+    </p>
+
+    <!-- Divider -->
+    <div id="hero-divider-top" class="flex w-full max-w-xs items-center gap-3">
+      <div class="h-px flex-1 bg-[#c9a86c] opacity-50"></div>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="#c9a86c" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 0L9.8 6.2L16 8L9.8 9.8L8 16L6.2 9.8L0 8L6.2 6.2L8 0Z"/>
+      </svg>
+      <div class="h-px flex-1 bg-[#c9a86c] opacity-50"></div>
+    </div>
+
+    <!-- Names -->
+    <h1 id="hero-names" class="
+      font-script text-6xl/tight text-[#c9a86c] drop-shadow-lg
+      sm:text-7xl
+    ">
+      Carlos &amp; Cherly
+    </h1>
+
+    <!-- Unite text -->
+    <p id="hero-unite" class="font-serif text-xl tracking-wider text-white">
+      Se unen en Matrimonio
+    </p>
+
+    <!-- Date -->
+    <p id="hero-date" class="
+      font-serif text-2xl font-medium tracking-widest text-[#c9a86c]
+    ">
+      18 · Abril · 2026
+    </p>
+
+    <!-- Divider -->
+    <div id="hero-divider-bot" class="flex w-full max-w-xs items-center gap-3">
+      <div class="h-px flex-1 bg-[#c9a86c] opacity-50"></div>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="#c9a86c" xmlns="http://www.w3.org/2000/svg">
+        <path d="M8 0L9.8 6.2L16 8L9.8 9.8L8 16L6.2 9.8L0 8L6.2 6.2L8 0Z"/>
+      </svg>
+      <div class="h-px flex-1 bg-[#c9a86c] opacity-50"></div>
+    </div>
+
+    <!-- Guest greeting -->
+    <p id="hero-greeting" class="
+      max-w-sm font-sans text-base/relaxed text-white/70
+    ">
+      Con mucha alegría te invitamos,
+    </p>
+    <p id="hero-guest-name" class="
+      -mt-2 font-serif text-2xl font-semibold text-white
+    ">
+      {guestName}
+    </p>
+
+    <!-- Venue -->
+    <p id="hero-venue" class="
+      mt-1 font-sans text-xs tracking-widest text-white/50 uppercase
+    ">
+      Centro de Día INJUPEMP · Tegucigalpa
+    </p>
+
+    <!-- Verse -->
+    <p id="hero-verse" class="mt-1 font-serif text-xs text-white/40 italic">
+      "Todo lo hizo hermoso en su tiempo" — Ecl. 3:11
+    </p>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div id="scroll-indicator" class="
+    absolute bottom-8 flex flex-col items-center gap-2 text-white/50
+  ">
+    <p class="text-xs tracking-widest uppercase">Desliza</p>
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M10 4L10 16M10 16L5 11M10 16L15 11" stroke="#c9a86c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+  tl.from('#hero-parents', { opacity: 0, y: 15, duration: 0.7 })
+    .from('#hero-pretitle', { opacity: 0, y: 15, duration: 0.7 }, '-=0.3')
+    .from('#hero-divider-top', { opacity: 0, scaleX: 0, duration: 0.6 }, '-=0.4')
+    .from('#hero-names', { opacity: 0, y: 30, duration: 1 }, '-=0.3')
+    .from('#hero-unite', { opacity: 0, y: 20, duration: 0.7 }, '-=0.5')
+    .from('#hero-date', { opacity: 0, y: 20, duration: 0.7 }, '-=0.4')
+    .from('#hero-divider-bot', { opacity: 0, scaleX: 0, duration: 0.6 }, '-=0.4')
+    .from('#hero-greeting', { opacity: 0, y: 20, duration: 0.7 }, '-=0.3')
+    .from('#hero-guest-name', { opacity: 0, y: 20, duration: 0.7 }, '-=0.4')
+    .from('#hero-venue', { opacity: 0, y: 15, duration: 0.6 }, '-=0.3')
+    .from('#hero-verse', { opacity: 0, duration: 0.8 }, '-=0.2')
+    .from('#scroll-indicator', { opacity: 0, duration: 0.8 }, '-=0.4');
+
+  gsap.to('#scroll-indicator svg', {
+    y: 6, duration: 0.8, repeat: -1, yoyo: true, ease: 'power1.inOut',
+  });
+</script>

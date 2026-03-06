@@ -1,0 +1,147 @@
+---
+interface Props {
+  guestId: string;
+}
+const { guestId } = Astro.props;
+---
+
+<section id="playlist-section" class="
+  bg-cream px-4 py-12
+  sm:px-6 sm:py-20
+">
+  <div class="mx-auto max-w-lg text-center">
+    <p class="mb-3 text-xs tracking-[0.3em] text-brown-muted uppercase">Playlist</p>
+    <h2 class="
+      mb-3 font-serif text-3xl text-brown-dark
+      sm:mb-4 sm:text-4xl
+    ">¿Qué canción no puede faltar?</h2>
+    <p class="
+      mb-7 font-sans leading-relaxed text-brown-muted
+      sm:mb-10
+    ">
+      Ayúdanos a crear la playlist perfecta para nuestra celebración
+    </p>
+
+    <div id="playlist-form-container" class="
+      rounded-2xl border border-[#cdd5eb] bg-white p-5 shadow-sm
+      sm:p-8
+    ">
+      <form id="playlist-form" class="space-y-4">
+        <input type="hidden" id="pl-guest-id" value={guestId} />
+
+        <div class="playlist-field text-left">
+          <label class="
+            mb-2 block text-xs tracking-widest text-brown-muted uppercase
+          " for="pl-song">
+            Canción
+          </label>
+          <input
+            type="text"
+            id="pl-song"
+            name="song"
+            required
+            class="
+              w-full rounded-xl border border-[#cdd5eb] bg-cream px-4 py-3
+              text-brown-dark placeholder-[#8fa0c0]
+              focus:border-transparent focus:ring-2 focus:ring-[#c9a86c]
+              focus:outline-none
+            "
+            placeholder="Nombre de la canción"
+          />
+        </div>
+
+        <div class="playlist-field text-left">
+          <label class="
+            mb-2 block text-xs tracking-widest text-brown-muted uppercase
+          " for="pl-artist">
+            Artista
+          </label>
+          <input
+            type="text"
+            id="pl-artist"
+            name="artist"
+            class="
+              w-full rounded-xl border border-[#cdd5eb] bg-cream px-4 py-3
+              text-brown-dark placeholder-[#8fa0c0]
+              focus:border-transparent focus:ring-2 focus:ring-[#c9a86c]
+              focus:outline-none
+            "
+            placeholder="Nombre del artista"
+          />
+        </div>
+
+        <button
+          type="submit"
+          id="pl-submit"
+          class="
+            mt-2 w-full rounded-xl bg-[#c9a86c] py-3 font-medium text-white
+            transition-colors
+            hover:bg-[#a8893d]
+          "
+        >
+          Sugerir canción
+        </button>
+      </form>
+
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  // Animate form fields in on scroll
+  gsap.from('.playlist-field', {
+    opacity: 0,
+    y: 20,
+    stagger: 0.15,
+    duration: 0.7,
+    ease: 'power3.out',
+    scrollTrigger: {
+      trigger: '#playlist-section',
+      start: 'top 75%',
+    },
+  });
+
+  const form = document.getElementById('playlist-form') as HTMLFormElement;
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Enviando...';
+
+    const guestId = (document.getElementById('pl-guest-id') as HTMLInputElement).value;
+    const song = (document.getElementById('pl-song') as HTMLInputElement).value;
+    const artist = (document.getElementById('pl-artist') as HTMLInputElement).value;
+
+    try {
+      const res = await fetch('/api/song-suggestion', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ guestId, song, artist }),
+      });
+
+      if (res.ok) {
+        (window as any).showToast?.({
+          title: '¡Canción sugerida!',
+          body: `"${song}"${artist ? ` de ${artist}` : ''} llegará a la playlist de la celebración.`,
+          icon: 'music',
+        });
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sugerir canción';
+      } else {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Sugerir canción';
+      }
+    } catch {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Sugerir canción';
+    }
+  });
+
+</script>

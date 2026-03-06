@@ -1,0 +1,92 @@
+---
+// Target: April 18, 2026 4:00 PM Honduras time (UTC-6)
+---
+
+<section id="countdown" class="
+  bg-linear-to-br from-[#1e2f52] to-[#0d1b35] px-6 py-20
+">
+  <div class="mx-auto max-w-2xl text-center">
+    <p class="mb-3 text-xs tracking-[0.3em] text-white/50 uppercase">Faltan</p>
+    <h2 class="mb-10 font-serif text-3xl text-white">para el gran día</h2>
+
+    <div class="
+      grid grid-cols-4 gap-3
+      sm:gap-6
+    ">
+      {(['days', 'hours', 'minutes', 'seconds'] as const).map((unit) => (
+        <div class="flex flex-col items-center">
+          <div class="
+            flex aspect-square w-full items-center justify-center rounded-2xl
+            border border-white/20 bg-white/10 shadow-lg backdrop-blur-sm
+          ">
+            <span
+              id={`cd-${unit}`}
+              class="
+                -mt-3 font-serif text-3xl font-semibold text-[#c9a86c]
+                sm:text-5xl
+              "
+            >
+              00
+            </span>
+          </div>
+          <p class="
+            mt-2 text-[10px] tracking-widest text-white/50 uppercase
+            sm:text-xs
+          ">
+            {unit === 'days' && 'Días'}
+            {unit === 'hours' && 'Horas'}
+            {unit === 'minutes' && 'Minutos'}
+            {unit === 'seconds' && 'Segundos'}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <p class="mt-10 font-serif text-lg text-white/70 italic">18 de Abril de 2026</p>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+
+  const TARGET = new Date('2026-04-18T22:00:00Z').getTime();
+
+  const els = {
+    days: document.getElementById('cd-days')!,
+    hours: document.getElementById('cd-hours')!,
+    minutes: document.getElementById('cd-minutes')!,
+    seconds: document.getElementById('cd-seconds')!,
+  };
+
+  let prev = { days: -1, hours: -1, minutes: -1, seconds: -1 };
+
+  function pad(n: number) {
+    return String(Math.max(0, n)).padStart(2, '0');
+  }
+
+  function flipNumber(el: HTMLElement, value: string) {
+    gsap.to(el, {
+      opacity: 0, y: -8, duration: 0.15,
+      onComplete: () => {
+        el.textContent = value;
+        gsap.fromTo(el, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.2 });
+      },
+    });
+  }
+
+  function tick() {
+    const diff = Math.max(0, TARGET - Date.now());
+    const days    = Math.floor(diff / 86400000);
+    const hours   = Math.floor((diff % 86400000) / 3600000);
+    const minutes = Math.floor((diff % 3600000) / 60000);
+    const seconds = Math.floor((diff % 60000) / 1000);
+
+    if (days !== prev.days)       { flipNumber(els.days, pad(days));       prev.days = days; }
+    if (hours !== prev.hours)     { flipNumber(els.hours, pad(hours));     prev.hours = hours; }
+    if (minutes !== prev.minutes) { flipNumber(els.minutes, pad(minutes)); prev.minutes = minutes; }
+    if (seconds !== prev.seconds) { flipNumber(els.seconds, pad(seconds)); prev.seconds = seconds; }
+  }
+
+  tick();
+  setInterval(tick, 1000);
+</script>

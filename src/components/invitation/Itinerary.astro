@@ -1,0 +1,102 @@
+---
+const items = [
+  { time: '4:00 PM',  label: 'Ceremonia',               icon: 'church',   detail: 'Área Verde INJUPEMP' },
+  { time: '6:00 PM',  label: 'Recepción',               icon: 'party',    detail: 'Salón Multiusos' },
+  { time: '6:30 PM',  label: 'Sesión de Fotos',         icon: 'camera',   detail: '' },
+  { time: '7:30 PM',  label: 'Cena',                    icon: 'fork',     detail: '' },
+  { time: '8:30 PM',  label: 'Especial del Novio',      icon: 'mic',      detail: 'Palabras especiales' },
+  { time: '9:30 PM',  label: 'Brindis',                 icon: 'glass',    detail: '' },
+  { time: '10:00 PM', label: 'El Ramo',                 icon: 'bouquet',  detail: '' },
+  { time: '10:30 PM', label: 'Corte de Pastel',         icon: 'cake',     detail: '' },
+];
+
+const icons: Record<string, string> = {
+  church: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L12 7M10 4h4"/><path d="M4 22V10l8-5 8 5v12"/><path d="M9 22V16h6v6"/><path d="M4 10h16"/></svg>`,
+  party:  `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5.8 11.3 2 22l10.7-3.79"/><path d="M4 3h.01M22 8h.01M15 2h.01M22 20h.01M22 2l-2.24 2.24"/><path d="m22 13-2.5-2.5"/><path d="m8 8-2.24-2.24"/><path d="m16 15-4.5-4.5"/><circle cx="10" cy="14" r="8"/></svg>`,
+  camera: `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>`,
+  fork:   `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/></svg>`,
+  mic:    `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" x2="12" y1="19" y2="22"/></svg>`,
+  glass:  `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8"/><path d="M12 11v11"/><path d="m19 3-7 8-7-8z"/></svg>`,
+  bouquet:`<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12"/><path d="M12 12C12 12 7 10 7 6a5 5 0 0 1 10 0c0 4-5 6-5 6Z"/><path d="M6.5 16.5C5 15 5 12 7 12c2 0 2 3 2 3s0-3 2-3 2 3 2 3 0-3 2-3 2 3.5.5 4.5"/></svg>`,
+  cake:   `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3"/><path d="M12 8v3"/><path d="M17 8v3"/><path d="M7 4 12 2l5 2"/></svg>`,
+};
+---
+
+<section id="itinerary" class="
+  bg-linear-to-b from-rose-pale to-cream px-6 py-20
+">
+  <div class="mx-auto max-w-xl">
+    <div class="mb-14 text-center">
+      <p class="mb-3 text-xs tracking-[0.3em] text-brown-muted uppercase">El gran día</p>
+      <h2 class="font-serif text-4xl text-brown-dark">Programa</h2>
+      <div class="mx-auto mt-4 flex max-w-xs items-center gap-3">
+        <div class="h-px flex-1 bg-[#c9a86c] opacity-40"></div>
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="#c9a86c"><path d="M6 0L7.4 4.6L12 6L7.4 7.4L6 12L4.6 7.4L0 6L4.6 4.6Z"/></svg>
+        <div class="h-px flex-1 bg-[#c9a86c] opacity-40"></div>
+      </div>
+    </div>
+
+    <div class="relative">
+      <!-- Vertical line -->
+      <div class="
+        absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-[#c5cfe6]
+      "></div>
+
+      <div class="flex flex-col gap-8">
+        {items.map((item, i) => (
+          <div class={`
+            itinerary-item flex items-center gap-4
+            ${i % 2 === 0 ? `flex-row` : `flex-row-reverse`}
+          `}>
+            <!-- Content card -->
+            <div class={`
+              flex-1
+              ${i % 2 === 0 ? 'text-right' : 'text-left'}
+            `}>
+              <p class="
+                mb-1 text-xs font-medium tracking-widest text-[#c9a86c]
+                uppercase
+              ">{item.time}</p>
+              <p class="font-serif text-lg text-brown-dark">{item.label}</p>
+              {item.detail && <p class="mt-0.5 text-xs text-brown-muted">{item.detail}</p>}
+            </div>
+
+            <!-- Icon bubble -->
+            <div class="
+              relative z-10 flex size-12 shrink-0 items-center justify-center
+              rounded-full border-2 border-[#c5cfe6] bg-white text-[#c9a86c]
+              shadow-sm
+            ">
+              <Fragment set:html={icons[item.icon]} />
+            </div>
+
+            <!-- Empty spacer -->
+            <div class="flex-1"></div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const items = document.querySelectorAll('.itinerary-item');
+  items.forEach((item, i) => {
+    const isLeft = i % 2 === 0;
+    gsap.from(item, {
+      opacity: 0,
+      x: isLeft ? -40 : 40,
+      duration: 0.7,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: item,
+        start: 'top 85%',
+      },
+    });
+  });
+</script>

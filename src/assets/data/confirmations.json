@@ -1,0 +1,26 @@
+[
+  {
+    "guestId": "familia-garcia",
+    "guestName": "Familia García",
+    "attending": true,
+    "attendees": 3,
+    "message": "",
+    "confirmedAt": "2026-03-06T04:17:23.547Z"
+  },
+  {
+    "guestId": "general",
+    "guestName": "Estimado Invitado",
+    "attending": false,
+    "attendees": 0,
+    "message": "",
+    "confirmedAt": "2026-03-06T05:26:33.084Z"
+  },
+  {
+    "guestId": "025ad538-465e-4090-b854-26c9424e1f8c",
+    "guestName": "Johan y Alexa",
+    "attending": true,
+    "attendees": 2,
+    "message": "",
+    "confirmedAt": "2026-03-06T07:07:56.744Z"
+  }
+]

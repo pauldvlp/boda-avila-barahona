@@ -1,0 +1,32 @@
+[
+  {
+    "id": "familia-garcia",
+    "name": "Familia García",
+    "seats": 4
+  },
+  {
+    "id": "ana-martinez",
+    "name": "Ana Martínez",
+    "seats": 1
+  },
+  {
+    "id": "pedro-y-lucia",
+    "name": "Pedro y Lucía Rodríguez",
+    "seats": 2
+  },
+  {
+    "id": "carlos-mendoza",
+    "name": "Carlos Mendoza",
+    "seats": 1
+  },
+  {
+    "id": "invitado-general",
+    "name": "Estimado Invitado",
+    "seats": 1
+  },
+  {
+    "id": "025ad538-465e-4090-b854-26c9424e1f8c",
+    "name": "Johan y Alexa",
+    "seats": 2
+  }
+]
