@@ -39,7 +39,7 @@ async function blobGet<T>(key: string): Promise<T | null> {
 
 async function blobPut(key: string, data: unknown): Promise<void> {
   const { put } = await import('@vercel/blob')
-  await put(key, JSON.stringify(data), { access: 'private', addRandomSuffix: false })
+  await put(key, JSON.stringify(data), { access: 'private', addRandomSuffix: false, allowOverwrite: true })
 }
 
 // ── Guests ────────────────────────────────────────────────────
