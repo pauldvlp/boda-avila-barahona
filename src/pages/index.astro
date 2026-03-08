@@ -5,6 +5,7 @@ import Countdown from '../components/invitation/Countdown.astro';
 import DressCode from '../components/invitation/DressCode.astro';
 import Footer from '../components/invitation/Footer.astro';
 import Gallery from '../components/invitation/Gallery.astro';
+import GiftsSection from '../components/invitation/GiftsSection.astro';
 import Hero from '../components/invitation/Hero.astro';
 import Itinerary from '../components/invitation/Itinerary.astro';
 import MapSection from '../components/invitation/MapSection.astro';
@@ -59,6 +60,7 @@ const ogImage = new URL('/og-image.png', Astro.site).href;
     <Countdown />
     <Itinerary />
     <DressCode seats={guest.seats} />
+    <GiftsSection />
     <Gallery />
     <MapSection seats={guest.seats} />
     <PlaylistSection guestId={guest.id} seats={guest.seats} locked={!isGuest} />
