@@ -671,7 +671,21 @@ const pending       = guests.length - confirmations.length;
 
       // ── Copy link ───────────────────────────────────────────────
       async function copyInviteLink(id: string, name: string) {
-        const url = `${window.location.origin}/?guest=${id}`;
+        const url = `Querido invitado: 
+Se aproxima el día más esperado de  nuestras vidas “un si para toda la vida”♾️ C&C👰🤵
+
+Junto a nuestros padres, quienes nos han guiado y acompañado con amor❤️ y la presencia de Dios que nos acompañada cada día ✨
+queremos compartir con ustedes el inicio de una nueva etapa en nuestras vidas.
+
+Carlos & Cherly 
+Nos casamos 💍
+
+y sería un honor que nos acompañen
+para celebrar juntos el amor, la familia y la amistad.
+
+La información completa del evento se encuentra disponible
+en la invitación digital, a la cual pueden mediante el enlace 🔗
+${window.location.origin}/?guest=${id}`;
         await navigator.clipboard.writeText(url);
         showToast(`Enlace de ${name} copiado`);
       }
