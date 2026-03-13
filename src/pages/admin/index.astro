@@ -402,6 +402,7 @@ const pending       = guests.length - confirmations.length;
                       "
                       data-id={g.id}
                       data-name={g.name}
+                      data-seats={g.seats}
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
@@ -670,8 +671,9 @@ const pending       = guests.length - confirmations.length;
       });
 
       // ── Copy link ───────────────────────────────────────────────
-      async function copyInviteLink(id: string, name: string) {
-        const url = `Querido invitado: 
+      async function copyInviteLink(id: string, name: string, seats = 1) {
+        const greeting = seats > 1 ? `Queridos(as) ${name}:` : `Querido(a) ${name}:`;
+        const url = `${greeting}
 Se aproxima el día más esperado de  nuestras vidas “un si para toda la vida”♾️ C&C👰🤵
 
 Junto a nuestros padres, quienes nos han guiado y acompañado con amor❤️ y la presencia de Dios que nos acompañada cada día ✨
@@ -691,13 +693,13 @@ ${window.location.origin}/?guest=${id}`;
       }
 
       document.querySelectorAll<HTMLButtonElement>('.btn-copy').forEach(btn => {
-        btn.addEventListener('click', () => copyInviteLink(btn.dataset.id!, btn.dataset.name!));
+        btn.addEventListener('click', () => copyInviteLink(btn.dataset.id!, btn.dataset.name!, Number(btn.dataset.seats)));
       });
 
       document.getElementById('btn-copy-drawer')?.addEventListener('click', () => {
         const id   = formId.value;
         const name = formName.value;
-        if (id) copyInviteLink(id, name);
+        if (id) copyInviteLink(id, name, Number(formSeats.value));
       });
 
       // ── Delete confirmation ─────────────────────────────────────
